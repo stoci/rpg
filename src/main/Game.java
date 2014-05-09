@@ -18,6 +18,12 @@ public class Game extends Application
 		launch(args);
 	}
 	
+	void waitforInput()
+	{
+		
+	}
+	
+	
 	@Override
 	public void start(Stage stage) {
 		try {
@@ -52,8 +58,9 @@ public class Game extends Application
 			img.setFitHeight(800); img.setFitWidth(600); img.setPreserveRatio(true);
 			grid.add(img,1,1,1,1);
 			/*TEXT DESCRIPTION AREA -- DISPLAY ONLY*/
-			TextArea textDescr = new TextArea("text descriptions");
-			textDescr.setEditable(false);
+			Text txt1 = new Text("changeable area awaits user input to change");
+			TextFlow textDescr = new TextFlow(txt1);
+			textDescr.setMinWidth(400);
 			grid.add(textDescr,0,1,1,1);
 			/*CHARACTER TABLEVIEW -- DISPLAY ONLY*/
 			TableView charTable = new TableView();
