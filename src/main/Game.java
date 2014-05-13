@@ -2,6 +2,8 @@ package main;
 	
 import character.Const;
 import javafx.application.Application;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -15,6 +17,8 @@ import javafx.geometry.*;
 
 public class Game extends Application 
 {	
+	static String userInput = "";
+	static Text textOutput = new Text("changeable area awaits user input to change");
 	public static void main(String[] args) 
 	{
 		launch(args);
@@ -60,13 +64,12 @@ public class Game extends Application
 			img.setFitHeight(800); img.setFitWidth(600); img.setPreserveRatio(true);
 			grid.add(img,1,1,1,1);
 			/*TEXT DESCRIPTION AREA -- DISPLAY ONLY*/
-			Text txt1 = new Text("changeable area awaits user input to change");
-			TextFlow textDescr = new TextFlow(txt1);
+			TextFlow textDescr = new TextFlow(textOutput);
 			textDescr.setMinWidth(400);
 			grid.add(textDescr,0,1,1,1);
 			/*CHARACTER TABLEVIEW -- DISPLAY ONLY*/
 			TableView charTable = new TableView();
-			TableColumn numCol = new TableColumn("#");
+			//TableColumn numCol = new TableColumn("#");
 			TableColumn nameCol = new TableColumn("Name");
 			TableColumn lvlCol = new TableColumn("Lvl");
 			TableColumn acCol = new TableColumn("AC");
@@ -79,16 +82,16 @@ public class Game extends Application
 			TableColumn statusCol = new TableColumn("STA");
 			TableColumn goldCol = new TableColumn("Gold");
 			TableColumn wpnCol = new TableColumn("Wpn");
-			charTable.getColumns().addAll(numCol,nameCol,lvlCol,acCol,hpCol,mpCol,ppCol,spCol,bpCol,profCol,statusCol,goldCol,wpnCol);
+			charTable.getColumns().addAll(nameCol,lvlCol,acCol,hpCol,mpCol,ppCol,spCol,bpCol,profCol,statusCol,goldCol,wpnCol);
 			grid.add(charTable,0,2,2,1);
 
 			/*KEYINPUT HANDLER*/
 			scene.setOnKeyTyped(new EventHandler<KeyEvent>(){
 				public void handle(KeyEvent ke)
 				{
-					String c = String.valueOf(ke.getCharacter());
-					//System.out.print(c);
-					txt1.setText(c);
+					userInput = String.valueOf(ke.getCharacter());
+					System.out.print(userInput);
+					//txt1.setText(userInput);
 				}
 			});
 			
@@ -97,9 +100,55 @@ public class Game extends Application
 			stage.setScene(scene);
 			stage.setTitle("Proving Grounds");
 			stage.show();
+			while(true)	begin();
 			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	//starting point for game (use recursive method calls to maintain state?)
+	private void begin() 
+	{
+		textOutput.setText("Welcome to Proving Grounds!\n(C)ontinue\n(E)xit");
+		//need to wait for user input...not sure how
+
+	}
+
+	private void charCreation() {
+		textOutput.setText("Let's create a character?\n(Y)es\n(N)o");
+		if(userInput.equalsIgnoreCase("y"))
+		{
+			
+		}
+		if(userInput.equalsIgnoreCase("n"))return;
+		
+	}
+	
+	//possible implementation of wait for user input Service
+	class UserInputService extends Service<String>
+	{
+		final String[] sArr;
+		UserInputService(String...arr)
+		{
+			sArr = arr;
+		}
+		@Override
+		protected Task<String> createTask() {
+			return new Task<String>(){
+
+				@Override
+				protected String call() throws Exception {
+					updateMessage("waiting for userInput to change");
+					while(true)
+					{
+						for(String s : sArr)
+							if(userInput.equalsIgnoreCase(s))return userInput;
+					}
+				}
+				
+			};
+		}
+		
 	}
 }
