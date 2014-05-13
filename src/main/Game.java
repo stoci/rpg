@@ -6,8 +6,10 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.*;
+import javafx.event.EventHandler;
 import javafx.geometry.*;
 
 
@@ -80,9 +82,16 @@ public class Game extends Application
 			charTable.getColumns().addAll(numCol,nameCol,lvlCol,acCol,hpCol,mpCol,ppCol,spCol,bpCol,profCol,statusCol,goldCol,wpnCol);
 			grid.add(charTable,0,2,2,1);
 
-			/*SUBMIT COMMANDS BUTTON
-			Button btn = new Button("Submit");
-			grid.add(btn,0,4);*/
+			/*KEYINPUT HANDLER*/
+			scene.setOnKeyTyped(new EventHandler<KeyEvent>(){
+				public void handle(KeyEvent ke)
+				{
+					String c = String.valueOf(ke.getCharacter());
+					//System.out.print(c);
+					txt1.setText(c);
+				}
+			});
+			
 			/*SET STAGE UP*/
 			//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			stage.setScene(scene);
