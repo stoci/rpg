@@ -132,31 +132,5 @@ public class Game extends Application
 		if(userInput.equalsIgnoreCase("n"))return;
 		
 	}
-	
-	//possible implementation of wait for user input Service
-	class UserInputService extends Service<String>
-	{
-		final String[] sArr;
-		UserInputService(String...arr)
-		{
-			sArr = arr;
-		}
-		@Override
-		protected Task<String> createTask() {
-			return new Task<String>(){
-				@Override
-				protected String call() throws Exception {
-					updateMessage("waiting for userInput to change");
-					while(true)
-					{
-						Thread.sleep(1000);
-						for(String s : sArr)
-							if(userInput.equalsIgnoreCase(s))return userInput;
-					}
-				}
-				
-			};
-		}
-		
-	}
 }
+	
