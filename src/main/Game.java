@@ -17,19 +17,16 @@ import javafx.geometry.*;
 
 public class Game extends Application 
 {	
-	static String userInput = "";
+	/*null when no valid key has been pressed*/
+	static String userInput = null;
 	static Text textOutput = new Text("changeable area awaits user input to change");
-	public static void main(String[] args) 
-	{
-		launch(args);
-	}
 	
-	void waitforInput()
-	{
-		
-	}
+	/*contains array of valid choices based on what is presented to user*/
+	static String [] validChoices;
 	
+	public static void main(String[] args) { launch(args);}
 	
+	/* */
 	@Override
 	public void start(Stage stage) {
 		try {
@@ -84,35 +81,46 @@ public class Game extends Application
 			TableColumn wpnCol = new TableColumn("Wpn");
 			charTable.getColumns().addAll(nameCol,lvlCol,acCol,hpCol,mpCol,ppCol,spCol,bpCol,profCol,statusCol,goldCol,wpnCol);
 			grid.add(charTable,0,2,2,1);
-
-			/*KEYINPUT HANDLER*/
-			scene.setOnKeyTyped(new EventHandler<KeyEvent>(){
+			
+			
+			/*the only direct user input*/
+			EventHandler<KeyEvent> keyEvent = new EventHandler<KeyEvent>(){
 				public void handle(KeyEvent ke)
 				{
-					userInput = String.valueOf(ke.getCharacter());
-					System.out.print(userInput);
-					//txt1.setText(userInput);
+					validateInput(ke.getCharacter());
+					
 				}
-			});
-			
+			};
+			/*KEYINPUT HANDLER*/
+			scene.setOnKeyTyped(keyEvent);
 			/*SET STAGE UP*/
 			//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			stage.setScene(scene);
 			stage.setTitle("Proving Grounds");
 			stage.show();
-			while(true)	begin();
+			begin();
 			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
+	/*checks every key typed against validChoice array*/
+	private void validateInput(String ch)
+	{
+		for(String s : validChoices)
+			if(ch.equalsIgnoreCase(s))
+			{
+				userInput=ch;
+				System.out.print(userInput);
+				return;
+			}
+	}
 	//starting point for game (use recursive method calls to maintain state?)
-	private void begin() 
+	private void begin()
 	{
 		textOutput.setText("Welcome to Proving Grounds!\n(C)ontinue\n(E)xit");
-		//need to wait for user input...not sure how
-
+		validChoices = new String[]{"c","e"};
 	}
 
 	private void charCreation() {
@@ -136,12 +144,12 @@ public class Game extends Application
 		@Override
 		protected Task<String> createTask() {
 			return new Task<String>(){
-
 				@Override
 				protected String call() throws Exception {
 					updateMessage("waiting for userInput to change");
 					while(true)
 					{
+						Thread.sleep(1000);
 						for(String s : sArr)
 							if(userInput.equalsIgnoreCase(s))return userInput;
 					}
