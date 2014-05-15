@@ -13,16 +13,21 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.*;
 import javafx.event.EventHandler;
 import javafx.geometry.*;
+import main.FStateMachine;
 
 
 public class Game extends Application 
 {	
-	/*null when no valid key has been pressed*/
-	static String userInput = null;
+	/*empty string when no valid key has been pressed*/
+	static String userInput = "";
 	static Text textOutput = new Text("changeable area awaits user input to change");
+	/*contains STATE represented by an integer*/
+	static int state = 0;
 	
 	/*contains array of valid choices based on what is presented to user*/
 	static String [] validChoices;
+	
+	FStateMachine rpg = new FStateMachine();
 	
 	public static void main(String[] args) { launch(args);}
 	
@@ -87,7 +92,8 @@ public class Game extends Application
 			EventHandler<KeyEvent> keyEvent = new EventHandler<KeyEvent>(){
 				public void handle(KeyEvent ke)
 				{
-					validateInput(ke.getCharacter());
+					validateInput(ke.getCharacter().toLowerCase());
+					rpg.checkState();
 					
 				}
 			};
@@ -98,7 +104,9 @@ public class Game extends Application
 			stage.setScene(scene);
 			stage.setTitle("Proving Grounds");
 			stage.show();
-			begin();
+			
+			/*enter the finite state machine*/
+			rpg.begin();
 			
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -109,7 +117,7 @@ public class Game extends Application
 	private void validateInput(String ch)
 	{
 		for(String s : validChoices)
-			if(ch.equalsIgnoreCase(s))
+			if(ch.equals(s))
 			{
 				userInput=ch;
 				System.out.print(userInput);
