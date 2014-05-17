@@ -2,6 +2,9 @@ package character;
 
 public class Model implements IActions
 {
+	//class
+	private int charClass;
+	
 	//core attributes
 	private int strength,dexterity,twitch,constitution,intelligence,wisdom,commonSense,spirtuality,charisma,luck;
 	
@@ -321,6 +324,14 @@ public class Model implements IActions
 
 	public void setResModifier(double resModifier) {
 		this.resModifier = resModifier;
+	}
+
+	public int getCharClass() {
+		return charClass;
+	}
+
+	public void setCharClass(int charClass) {
+		this.charClass = charClass;
 	}
 
 }

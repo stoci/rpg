@@ -1,7 +1,10 @@
 package main;
 
+import javafx.application.Platform;
 import character.*;
 
+/*finite state machine implementation of game states
+ * build character progression: Race, gender, class, profession, alignment, age*/
 class FStateMachine
 {
 	/*points to character being created*/
@@ -17,7 +20,7 @@ class FStateMachine
 		switch(Game.userInput)
 		{
 			case "c": clear(); state1(); break;
-			case "e": System.exit(0); break;	
+			case "e": Platform.exit(); break;	
 			default:return;
 		}
 	}
@@ -74,11 +77,46 @@ class FStateMachine
 		}
 	}
 
-
-
-	private void state4() {
-		// TODO Auto-generated method stub
+	/*choose class*/
+	private void state4() 
+	{
+		Game.textOutput.setText("Class?\n(C)ommoner\n(F)ighter\n(R)anger\n"
+				+ "R(o)gue\n(T)rader\n(L)earned\n(H)ealer\nB(a)rd\n(M)ystical\n"
+				+ "(S)piritual\n(N)oble\n(B)ack");
+		Game.validChoices = new String[]{"c","f","r","o","t","l","h","a","m","s","n","b"};
+		Game.state=4;
 		
+		switch(Game.userInput)
+		{
+			case "c": clear(); m.setCharClass(Const.COMMONER); state5(); break;
+			case "f": clear(); m.setCharClass(Const.FIGHTER); state5(); break;
+			case "r": clear(); m.setCharClass(Const.RANGER); state5(); break;
+			case "o": clear(); m.setCharClass(Const.ROGUE); state5(); break;
+			case "t": clear(); m.setCharClass(Const.TRADER); state5(); break;
+			case "l": clear(); m.setCharClass(Const.LEARNED); state5(); break;
+			case "h": clear(); m.setCharClass(Const.HEALER); state5(); break;
+			case "a": clear(); m.setCharClass(Const.BARD); state5(); break;
+			case "m": clear(); m.setCharClass(Const.MYSTICAL); state5(); break;
+			case "s": clear(); m.setCharClass(Const.SPIRITUAL); state5(); break;
+			case "n": clear(); m.setCharClass(Const.NOBLE); state5(); break;
+			case "b": clear(); checkState(Game.state-1); break;
+			default:return;
+		}
+		
+	}
+	
+	/*choose profession*/
+	private void state5() 
+	{		
+	}
+	
+	/*choose alignment*/
+	private void state6() 
+	{
+	}
+	/*choose age*/
+	private void state7() 
+	{
 	}
 
 	/*checks state field to determine which method/state to enter*/
