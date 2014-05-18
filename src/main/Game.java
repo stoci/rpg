@@ -20,7 +20,7 @@ public class Game extends Application
 {	
 	/*empty string when no valid key has been pressed*/
 	static String userInput = "";
-	static Text textOutput = new Text("changeable area awaits user input to change");
+	static TextArea textDescr;
 	/*contains STATE represented by an integer*/
 	static int state = 0;
 	
@@ -66,8 +66,8 @@ public class Game extends Application
 			img.setFitHeight(800); img.setFitWidth(600); img.setPreserveRatio(true);
 			grid.add(img,1,1,1,1);
 			/*TEXT DESCRIPTION AREA -- DISPLAY ONLY*/
-			TextFlow textDescr = new TextFlow(textOutput);
-			textDescr.setMinWidth(400);
+			textDescr = new TextArea("changeable text area");
+			textDescr.setMinWidth(400); textDescr.setEditable(false);
 			grid.add(textDescr,0,1,1,1);
 			/*CHARACTER TABLEVIEW -- DISPLAY ONLY*/
 			TableView charTable = new TableView();
@@ -92,6 +92,7 @@ public class Game extends Application
 			EventHandler<KeyEvent> keyEvent = new EventHandler<KeyEvent>(){
 				public void handle(KeyEvent ke)
 				{
+					//System.out.println(ke.getCharacter());
 					validateInput(ke.getCharacter().toLowerCase());
 					rpg.checkState();
 					
@@ -99,10 +100,12 @@ public class Game extends Application
 			};
 			/*KEYINPUT HANDLER*/
 			scene.setOnKeyTyped(keyEvent);
+			textDescr.setOnKeyTyped(keyEvent);
 			/*SET STAGE UP*/
 			//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			stage.setScene(scene);
 			stage.setTitle("Proving Grounds");
+			stage.focusedProperty();
 			stage.show();
 			
 			/*enter the finite state machine*/
@@ -124,21 +127,6 @@ public class Game extends Application
 				return;
 			}
 	}
-	//starting point for game (use recursive method calls to maintain state?)
-	private void begin()
-	{
-		textOutput.setText("Welcome to Proving Grounds!\n(C)ontinue\n(E)xit");
-		validChoices = new String[]{"c","e"};
-	}
 
-	private void charCreation() {
-		textOutput.setText("Let's create a character?\n(Y)es\n(N)o");
-		if(userInput.equalsIgnoreCase("y"))
-		{
-			
-		}
-		if(userInput.equalsIgnoreCase("n"))return;
-		
-	}
 }
 	

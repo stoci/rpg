@@ -13,7 +13,7 @@ class FStateMachine
 	/*welcome screen*/
 	void begin()
 	{
-		Game.textOutput.setText("Welcome to Proving Grounds!\n(C)ontinue\n(E)xit");
+		Game.textDescr.setText("Welcome to Proving Grounds!\n(C)ontinue\n(E)xit");
 		Game.validChoices = new String[]{"c","e"};
 		Game.state=0;
 		
@@ -28,7 +28,7 @@ class FStateMachine
 	/*main selection screen*/
 	private void state1()
 	{
-		Game.textOutput.setText("Please select an action.\n(C)reate a character\n(E)nter the arena\n(B)ack");
+		Game.textDescr.setText("Please select an action.\n(C)reate a character\n(E)nter the arena\n(B)ack");
 		Game.validChoices = new String[]{"c","e","b"};
 		Game.state=1;
 		
@@ -44,7 +44,7 @@ class FStateMachine
 	/*choose race*/
 	private void state2() 
 	{
-		Game.textOutput.setText("Race?\n(H)uman\n(E)lf\n(D)warf\nH(o)bbit\n(B)ack");
+		Game.textDescr.setText("Race?\n(H)uman\n(E)lf\n(D)warf\nH(o)bbit\n(B)ack");
 		Game.validChoices = new String[]{"h","e","d","o","b"};
 		Game.state=2;
 		
@@ -64,7 +64,7 @@ class FStateMachine
 	/*choose gender*/
 	private void state3() 
 	{
-		Game.textOutput.setText("Gender?\n(M)ale\n(F)emale\n(B)ack");
+		Game.textDescr.setText("Gender?\n(M)ale\n(F)emale\n(B)ack");
 		Game.validChoices = new String[]{"m","f","b"};
 		Game.state=3;
 		
@@ -80,7 +80,7 @@ class FStateMachine
 	/*choose class*/
 	private void state4() 
 	{
-		Game.textOutput.setText("Class?\n(C)ommoner\n(F)ighter\n(R)anger\n"
+		Game.textDescr.setText("Class?\n(C)ommoner\n(F)ighter\n(R)anger\n"
 				+ "R(o)gue\n(T)rader\n(L)earned\n(H)ealer\nB(a)rd\n(M)ystical\n"
 				+ "(S)piritual\n(N)oble\n(B)ack");
 		Game.validChoices = new String[]{"c","f","r","o","t","l","h","a","m","s","n","b"};
