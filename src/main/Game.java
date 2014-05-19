@@ -67,6 +67,7 @@ public class Game extends Application
 			grid.add(img,1,1,1,1);
 			/*TEXT DESCRIPTION AREA -- DISPLAY ONLY*/
 			textDescr = new TextArea("changeable text area");
+			textDescr.setStyle("-fx-font-size: 20px;");
 			textDescr.setMinWidth(400); textDescr.setEditable(false);
 			grid.add(textDescr,0,1,1,1);
 			/*CHARACTER TABLEVIEW -- DISPLAY ONLY*/
