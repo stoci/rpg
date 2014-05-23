@@ -1,7 +1,12 @@
 package main;
 
+import java.io.*;
+import java.util.ArrayList;
+
 import javafx.application.Platform;
 import character.*;
+
+import javax.json.*;
 
 /*finite state machine implementation of game states
  * build character progression: Race, gender, class, profession, alignment, age*/
@@ -14,7 +19,7 @@ class FStateMachine
 	void begin()
 	{
 		Game.textDescr.setText("Welcome to Proving Grounds!\n(C)ontinue\n(E)xit");
-		Game.validChoices = new String[]{"c","e"};
+		Game.validChoices.add("c"); Game.validChoices.add("e");
 		Game.state=0;
 		
 		switch(Game.userInput)
@@ -29,7 +34,7 @@ class FStateMachine
 	private void state1()
 	{
 		Game.textDescr.setText("Please select an action.\n(C)reate a character\n(E)nter the arena\n(B)ack");
-		Game.validChoices = new String[]{"c","e","b"};
+		Game.validChoices.add("c");Game.validChoices.add("e");Game.validChoices.add("b");
 		Game.state=1;
 		
 		switch(Game.userInput)
@@ -44,9 +49,8 @@ class FStateMachine
 	/*choose race*/
 	private void state2() 
 	{
-		Game.textDescr.setText("Race?\n(H)uman\n(E)lf\n(D)warf\nH(o)bbit\n(B)ack");
-		Game.validChoices = new String[]{"h","e","d","o","b"};
 		Game.state=2;
+		readJSON();
 		
 		m = new Model();
 		switch(Game.userInput)
@@ -64,9 +68,8 @@ class FStateMachine
 	/*choose gender*/
 	private void state3() 
 	{
-		Game.textDescr.setText("Gender?\n(M)ale\n(F)emale\n(B)ack");
-		Game.validChoices = new String[]{"m","f","b"};
 		Game.state=3;
+		readJSON();
 		
 		switch(Game.userInput)
 		{
@@ -80,11 +83,8 @@ class FStateMachine
 	/*choose class*/
 	private void state4() 
 	{
-		Game.textDescr.setText("Class?\n(C)ommoner\n(F)ighter\n(R)anger\n"
-				+ "R(o)gue\n(T)rader\n(L)earned\n(H)ealer\nB(a)rd\n(M)ystical\n"
-				+ "(S)piritual\n(N)oble\n(B)ack");
-		Game.validChoices = new String[]{"c","f","r","o","t","l","h","a","m","s","n","b"};
 		Game.state=4;
+		readJSON();
 		
 		switch(Game.userInput)
 		{
@@ -107,12 +107,27 @@ class FStateMachine
 	
 	/*choose profession*/
 	private void state5() 
-	{		
+	{
+		Game.state=5;
+		readJSON();
+		
+		switch(Game.userInput){
+		case "n": clear(); state6(); break;
+		case "b": clear(); checkState(Game.state-1); break;
+		default:return;
+		}
 	}
 	
 	/*choose alignment*/
 	private void state6() 
 	{
+		Game.state=6;
+		readJSON();
+		
+		switch(Game.userInput){
+		case "b": clear(); checkState(Game.state-1); break;
+		default:return;
+		}
 	}
 	/*choose age*/
 	private void state7() 
@@ -130,6 +145,8 @@ class FStateMachine
 			case 2: state2(); break;
 			case 3: state3(); break;
 			case 4: state4(); break;
+			case 5: state5(); break;
+			case 6: state6(); break;
 			default:return;
 		}
 	}
@@ -138,5 +155,84 @@ class FStateMachine
 	private void clear()
 	{
 		Game.userInput="";
+		Game.validChoices.clear();
 	}
+	
+	/*read user-moddable .json files depending on which state*/
+	private void readJSON()
+	{
+		try
+		{
+			JsonReader reader=null;
+			/*current game state decides which file to read in*/
+			switch(Game.state)
+			{
+				case 2: reader = Json.createReader(new FileReader("./data/races.json"));break;
+				case 3: reader = Json.createReader(new FileReader("./data/genders.json"));break;
+				case 4: reader = Json.createReader(new FileReader("./data/classes.json"));break;
+				case 5: reader = Json.createReader(new FileReader("./data/professions.json"));break;
+				case 6: reader = Json.createReader(new FileReader("./data/alignments.json"));break;
+				default:return;
+			}
+			
+			JsonArray jsonst = reader.readArray();
+			ArrayList<String> items = new ArrayList<String>();
+			for(JsonValue v : jsonst)
+			{
+				String s = v.toString();
+				items.add(s.substring(1,s.length()-1));
+			}
+			//System.out.println(jsonst);System.out.println(items);
+			ArrayList<String> validChoices = new ArrayList<String>();
+			validChoices.add("b");
+			
+			/*dynamic processing actions -- must set Game.validChoices and Game.textDescr*/
+			/*iterate over choice Strings*/
+			for(String s : items)
+			{
+				/*check each letter in s against each letter in validChoice ArrayList*/
+				middle:for(int i = 0; i < s.length(); i++)
+				{
+					/*letter to be checked against valid array*/
+					String letter = String.valueOf(s.charAt(i)).toLowerCase();
+					/*check valid ArrayList for letter*/
+					for(int j = 0; j < validChoices.size(); j++)
+						/*match found -- try next letter*/
+						if(letter.equals(validChoices.get(j)))
+						{
+							continue middle;
+						}
+					/*no match found returns control to middle loop -- add to valid choices array*/
+					validChoices.add(letter); break middle;
+				}
+			}
+			/*remove "b" for now*/
+			validChoices.remove(0);
+			
+			/*generate GUI text choices*/
+			StringBuilder output = new StringBuilder();
+			for(int i = 0; i<items.size(); i++)
+			{
+				/*retrieve first choice FULL word*/
+				StringBuilder sb = new StringBuilder(items.get(i).toLowerCase());
+				/*get index of letter that needs to be wrapped*/
+				int index = sb.indexOf(validChoices.get(i));
+				//System.out.println(index);
+				/*reset first letter to uppercase by subtracting 32*/ 
+				sb.setCharAt(0, (char)(sb.charAt(0)-32));
+				String mod = sb.insert(index, "(").insert(index+2,")").toString();
+				output.append(mod+"\n");
+			}
+			output.append("(B)ack");
+			
+			/*dump all dynamically generated choices to GUI --add "b"*/
+			validChoices.add("b");
+			Game.validChoices = validChoices;
+			Game.textDescr.setText(output.toString());
+			//for(String s : Game.validChoices)System.out.print(s);System.out.println(); 
+		}
+		catch(Exception e){e.printStackTrace();}
+		finally{}
+	}
+	
 }
