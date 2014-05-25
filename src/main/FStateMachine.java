@@ -177,9 +177,12 @@ class FStateMachine
 			
 			JsonArray jsonst = reader.readArray();
 			ArrayList<String> items = new ArrayList<String>();
+			
+			/*convert all JsonValues into Strings -- trim quotes and check length isn't ridiculous*/
 			for(JsonValue v : jsonst)
 			{
 				String s = v.toString();
+				if(s.length()>10) throw new Exception("Value in JSON too long! Keep identifiers under 10 letters.");
 				items.add(s.substring(1,s.length()-1));
 			}
 			//System.out.println(jsonst);System.out.println(items);
@@ -234,5 +237,6 @@ class FStateMachine
 		catch(Exception e){e.printStackTrace();}
 		finally{}
 	}
+	/*read object-value(array) pairs*/
 	
 }
