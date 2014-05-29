@@ -93,12 +93,13 @@ public class Game extends Application
 				public void handle(KeyEvent ke)
 				{
 					//System.out.println(ke.getCharacter());
-					validateInput(ke.getCharacter().toLowerCase());
-					rpg.checkState();
-					
+					/*call validateInput method to set userInput field if key is in validChoices array*/
+					/*returns true if userInput changed -- reduce CPU cycles compared to previous code*/
+					if(validateInput(ke.getCharacter().toLowerCase()))
+						rpg.checkState();				
 				}
 			};
-			/*KEYINPUT HANDLER*/
+			/*KEYINPUT HANDLER -- add identical handlers to scene and Text display area*/
 			scene.setOnKeyTyped(keyEvent);
 			textDescr.setOnKeyTyped(keyEvent);
 			/*SET STAGE UP*/
@@ -116,16 +117,17 @@ public class Game extends Application
 		}
 	}
 	
-	/*checks every key typed against validChoice array*/
-	private void validateInput(String ch)
+	/*checks every key typed against validChoice array -- return true if userInput changed*/
+	private boolean validateInput(String ch)
 	{
 		for(String s : Game.validChoices)
 			if(ch.equals(s))
 			{
 				userInput=ch;
 				//System.out.print(userInput);
-				return;
+				return true;
 			}
+		return false;
 	}
 
 }

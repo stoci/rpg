@@ -1,5 +1,6 @@
-[
-
-	["Commoner","Peasant", "Wench"],
-	["Fighter","Fighter","Brawler","Warrior"]
-]
+{
+"professions":[
+	{"Commoner":["Commoner","Peasant","Wench"]},
+	{"Fighter":["Fighter","Brawler","Warrior"]}
+	]
+}

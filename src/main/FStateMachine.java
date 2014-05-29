@@ -15,7 +15,7 @@ class FStateMachine
 	/*points to character being created*/
 	Model m;
 	
-	/*welcome screen*/
+	/*welcome screen -- hard-coded*/
 	void begin()
 	{
 		Game.textDescr.setText("Welcome to Proving Grounds!\n(C)ontinue\n(E)xit");
@@ -30,7 +30,7 @@ class FStateMachine
 		}
 	}
 	
-	/*main selection screen*/
+	/*main selection screen -- hard-coded*/
 	private void state1()
 	{
 		Game.textDescr.setText("Please select an action.\n(C)reate a character\n(E)nter the arena\n(B)ack");
@@ -45,14 +45,15 @@ class FStateMachine
 			default:return;
 		}
 	}
-	
+	/*Character creation reads JSON files from ./data directory -- NOT hard-coded*/
 	/*choose race*/
 	private void state2() 
 	{
 		Game.state=2;
-		readJSON();
-		
+		readJSONArray();
 		m = new Model();
+		
+		
 		switch(Game.userInput)
 		{
 			case "h": clear(); m.setRace(Const.HUMAN); state3(); break;
@@ -69,7 +70,7 @@ class FStateMachine
 	private void state3() 
 	{
 		Game.state=3;
-		readJSON();
+		readJSONArray();
 		
 		switch(Game.userInput)
 		{
@@ -84,7 +85,7 @@ class FStateMachine
 	private void state4() 
 	{
 		Game.state=4;
-		readJSON();
+		readJSONArray();
 		
 		switch(Game.userInput)
 		{
@@ -109,7 +110,7 @@ class FStateMachine
 	private void state5() 
 	{
 		Game.state=5;
-		readJSON();
+		readJSONObject();
 		
 		switch(Game.userInput){
 		case "n": clear(); state6(); break;
@@ -122,7 +123,7 @@ class FStateMachine
 	private void state6() 
 	{
 		Game.state=6;
-		readJSON();
+		readJSONArray();
 		
 		switch(Game.userInput){
 		case "b": clear(); checkState(Game.state-1); break;
@@ -134,9 +135,10 @@ class FStateMachine
 	{
 	}
 
-	/*checks state field to determine which method/state to enter*/
+	/*state controller -- checks state field to determine which method/state to enter*/
 	void checkState(int ...state)
 	{
+		/*if no argument passed, initialize array with current state*/
 		if(state.length==0)state = new int[]{Game.state};
 		switch(state[0])
 		{
@@ -155,34 +157,35 @@ class FStateMachine
 	private void clear()
 	{
 		Game.userInput="";
-		Game.validChoices.clear();
+		//Game.validChoices.clear();
 	}
 	
-	/*read user-moddable .json files depending on which state*/
-	private void readJSON()
+	/*read user-moddable .json files containing only arrays depending on current Game.state*/
+	private void readJSONArray()
 	{
 		try
 		{
 			JsonReader reader=null;
+			/*generate GUI text choices*/
+			StringBuilder output = new StringBuilder();
 			/*current game state decides which file to read in*/
 			switch(Game.state)
 			{
-				case 2: reader = Json.createReader(new FileReader("./data/races.json"));break;
-				case 3: reader = Json.createReader(new FileReader("./data/genders.json"));break;
-				case 4: reader = Json.createReader(new FileReader("./data/classes.json"));break;
-				case 5: reader = Json.createReader(new FileReader("./data/professions.json"));break;
-				case 6: reader = Json.createReader(new FileReader("./data/alignments.json"));break;
+				case 2: output.append("Choose Race!\n\n");reader = Json.createReader(new FileReader("./data/races.json"));break;
+				case 3: output.append("Choose Gender!\n\n");reader = Json.createReader(new FileReader("./data/genders.json"));break;
+				case 4: output.append("Choose Class!\n\n");reader = Json.createReader(new FileReader("./data/classes.json"));break;
+				case 6: output.append("Choose Alignment!\n\n");reader = Json.createReader(new FileReader("./data/alignments.json"));break;
 				default:return;
 			}
 			
-			JsonArray jsonst = reader.readArray();
+			JsonArray arr = reader.readArray();
 			ArrayList<String> items = new ArrayList<String>();
 			
 			/*convert all JsonValues into Strings -- trim quotes and check length isn't ridiculous*/
-			for(JsonValue v : jsonst)
+			for(JsonValue v : arr)
 			{
 				String s = v.toString();
-				if(s.length()>10) throw new Exception("Value in JSON too long! Keep identifiers under 10 letters.");
+				if(s.length()>25) throw new Exception("Value in JSON too long! Keep identifiers under 25 letters.");
 				items.add(s.substring(1,s.length()-1));
 			}
 			//System.out.println(jsonst);System.out.println(items);
@@ -212,8 +215,6 @@ class FStateMachine
 			/*remove "b" for now*/
 			validChoices.remove(0);
 			
-			/*generate GUI text choices*/
-			StringBuilder output = new StringBuilder();
 			for(int i = 0; i<items.size(); i++)
 			{
 				/*retrieve first choice FULL word*/
@@ -226,7 +227,7 @@ class FStateMachine
 				String mod = sb.insert(index, "(").insert(index+2,")").toString();
 				output.append(mod+"\n");
 			}
-			output.append("(B)ack");
+			output.append("\n(B)ack");
 			
 			/*dump all dynamically generated choices to GUI --add "b"*/
 			validChoices.add("b");
@@ -237,6 +238,41 @@ class FStateMachine
 		catch(Exception e){e.printStackTrace();}
 		finally{}
 	}
-	/*read object-value(array) pairs*/
 	
+	/*read JSON file containing object maps*/
+	private void readJSONObject()
+	{
+		try
+		{
+			JsonReader reader=null; JsonArray arr = null;
+			/*current game state decides which file to parse then read in top level object*/
+			switch(Game.state)
+			{
+				case 5: reader=Json.createReader(new FileReader("./data/professions.json"));
+						arr = reader.readObject().getJsonArray("professions");break;
+				default:return;
+			}
+			
+			System.out.println(arr);
+			/*choose which object to read from JSON based on CharClass field in Model*/
+			switch(m.getCharClass())
+			{
+			
+			}
+			/*extract one object at a time -- trim quotes and check length isn't ridiculous*/
+			for(JsonObject o : arr.getValuesAs(JsonObject.class))
+			{
+				System.out.println(o);
+				/*
+				String s = o.toString();
+				if(s.length()>25) throw new Exception("Value in JSON too long! Keep identifiers under 25 letters.");
+				items.add(s.substring(1,s.length()-1));*/
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally{}
+	}
 }
