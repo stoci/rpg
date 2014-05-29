@@ -18,6 +18,7 @@ public class Game extends Application
 {	
 	/*empty string when no valid key has been pressed*/
 	static String userInput = "";
+	/* area where options are displayed*/
 	static TextArea textDescr;
 	/*contains STATE represented by an integer*/
 	static int state = 0;

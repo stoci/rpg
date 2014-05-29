@@ -1,7 +1,7 @@
 package main;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.*;
 
 import javafx.application.Platform;
 import character.*;
@@ -14,6 +14,12 @@ class FStateMachine
 {
 	/*points to character being created*/
 	Model m;
+	
+	/*validChoices but contains full words instead of letters*/
+	ArrayList<String> fullOptions = new ArrayList<String>();
+	
+	/*used by JSON reader methods*/
+	ArrayList<String> items = new ArrayList<String>();
 	
 	/*welcome screen -- hard-coded*/
 	void begin()
@@ -53,17 +59,21 @@ class FStateMachine
 		readJSONArray();
 		m = new Model();
 		
-		
-		switch(Game.userInput)
+		/*iterate through validChoices to check if any equals userInput*/
+		for(int i=0; i<Game.validChoices.size(); i++)
 		{
-			case "h": clear(); m.setRace(Const.HUMAN); state3(); break;
-			case "e": clear(); m.setRace(Const.ELF); state3(); break;
-			case "d": clear(); m.setRace(Const.DWARF); state3(); break;
-			case "o": clear(); m.setRace(Const.HOBBIT); state3(); break;
-			case "b": clear(); checkState(Game.state-1); break;
-			default:return;
-		}
-		
+			if(Game.userInput.equals(Game.validChoices.get(i)))
+			{
+				System.out.println(fullOptions.get(i));
+				m.setRace(fullOptions.get(i));
+				clear();state3();break;
+			}
+			else if(Game.userInput.equals("b"))
+			{
+				clear();
+				checkState(Game.state-1);break;
+			}
+		}		
 	}
 	
 	/*choose gender*/
@@ -72,12 +82,20 @@ class FStateMachine
 		Game.state=3;
 		readJSONArray();
 		
-		switch(Game.userInput)
+		/*iterate through validChoices to check if any equals userInput*/
+		for(int i=0; i<Game.validChoices.size(); i++)
 		{
-			case "m": clear(); m.setGender(Const.MALE); state4(); break;
-			case "f": clear(); m.setGender(Const.FEMALE); state4(); break;
-			case "b": clear(); checkState(Game.state-1); break;
-			default:return;
+			if(Game.userInput.equals(Game.validChoices.get(i)))
+			{
+				System.out.println(fullOptions.get(i));
+				m.setGender(fullOptions.get(i));
+				clear();state4();break;
+			}
+			else if(Game.userInput.equals("b"))
+			{
+				clear();
+				checkState(Game.state-1);break;
+			}
 		}
 	}
 
@@ -87,21 +105,20 @@ class FStateMachine
 		Game.state=4;
 		readJSONArray();
 		
-		switch(Game.userInput)
+		/*iterate through validChoices to check if any equals userInput*/
+		for(int i=0; i<Game.validChoices.size(); i++)
 		{
-			case "c": clear(); m.setCharClass(Const.COMMONER); state5(); break;
-			case "f": clear(); m.setCharClass(Const.FIGHTER); state5(); break;
-			case "r": clear(); m.setCharClass(Const.RANGER); state5(); break;
-			case "o": clear(); m.setCharClass(Const.ROGUE); state5(); break;
-			case "t": clear(); m.setCharClass(Const.TRADER); state5(); break;
-			case "l": clear(); m.setCharClass(Const.LEARNED); state5(); break;
-			case "h": clear(); m.setCharClass(Const.HEALER); state5(); break;
-			case "a": clear(); m.setCharClass(Const.BARD); state5(); break;
-			case "m": clear(); m.setCharClass(Const.MYSTICAL); state5(); break;
-			case "s": clear(); m.setCharClass(Const.SPIRITUAL); state5(); break;
-			case "n": clear(); m.setCharClass(Const.NOBLE); state5(); break;
-			case "b": clear(); checkState(Game.state-1); break;
-			default:return;
+			if(Game.userInput.equals(Game.validChoices.get(i)))
+			{
+				System.out.println(fullOptions.get(i));
+				m.setCharClass(fullOptions.get(i));
+				clear();state5();break;
+			}
+			else if(Game.userInput.equals("b"))
+			{
+				clear();
+				checkState(Game.state-1);break;
+			}
 		}
 		
 	}
@@ -112,10 +129,20 @@ class FStateMachine
 		Game.state=5;
 		readJSONObject();
 		
-		switch(Game.userInput){
-		case "n": clear(); state6(); break;
-		case "b": clear(); checkState(Game.state-1); break;
-		default:return;
+		/*iterate through validChoices to check if any equals userInput*/
+		for(int i=0; i<Game.validChoices.size(); i++)
+		{
+			if(Game.userInput.equals(Game.validChoices.get(i)))
+			{
+				System.out.println(fullOptions.get(i));
+				m.setProfession(fullOptions.get(i));
+				clear();state6();break;
+			}
+			else if(Game.userInput.equals("b"))
+			{
+				clear();
+				checkState(Game.state-1);break;
+			}
 		}
 	}
 	
@@ -125,9 +152,20 @@ class FStateMachine
 		Game.state=6;
 		readJSONArray();
 		
-		switch(Game.userInput){
-		case "b": clear(); checkState(Game.state-1); break;
-		default:return;
+		/*iterate through validChoices to check if any equals userInput*/
+		for(int i=0; i<Game.validChoices.size(); i++)
+		{
+			if(Game.userInput.equals(Game.validChoices.get(i)))
+			{
+				System.out.println(fullOptions.get(i));
+				m.setAlignment(fullOptions.get(i));
+				clear();state7();break;
+			}
+			else if(Game.userInput.equals("b"))
+			{
+				clear();
+				checkState(Game.state-1);break;
+			}
 		}
 	}
 	/*choose age*/
@@ -157,7 +195,7 @@ class FStateMachine
 	private void clear()
 	{
 		Game.userInput="";
-		//Game.validChoices.clear();
+		fullOptions.clear();
 	}
 	
 	/*read user-moddable .json files containing only arrays depending on current Game.state*/
@@ -166,6 +204,7 @@ class FStateMachine
 		try
 		{
 			JsonReader reader=null;
+			items.clear();
 			/*generate GUI text choices*/
 			StringBuilder output = new StringBuilder();
 			/*current game state decides which file to read in*/
@@ -179,61 +218,15 @@ class FStateMachine
 			}
 			
 			JsonArray arr = reader.readArray();
-			ArrayList<String> items = new ArrayList<String>();
 			
 			/*convert all JsonValues into Strings -- trim quotes and check length isn't ridiculous*/
 			for(JsonValue v : arr)
 			{
 				String s = v.toString();
 				if(s.length()>25) throw new Exception("Value in JSON too long! Keep identifiers under 25 letters.");
-				items.add(s.substring(1,s.length()-1));
+				items.add(s.substring(1,s.length()-1)); fullOptions.add(s.substring(1,s.length()-1));
 			}
-			//System.out.println(jsonst);System.out.println(items);
-			ArrayList<String> validChoices = new ArrayList<String>();
-			validChoices.add("b");
-			
-			/*dynamic processing actions -- must set Game.validChoices and Game.textDescr*/
-			/*iterate over choice Strings*/
-			for(String s : items)
-			{
-				/*check each letter in s against each letter in validChoice ArrayList*/
-				middle:for(int i = 0; i < s.length(); i++)
-				{
-					/*letter to be checked against valid array*/
-					String letter = String.valueOf(s.charAt(i)).toLowerCase();
-					/*check valid ArrayList for letter*/
-					for(int j = 0; j < validChoices.size(); j++)
-						/*match found -- try next letter*/
-						if(letter.equals(validChoices.get(j)))
-						{
-							continue middle;
-						}
-					/*no match found returns control to middle loop -- add to valid choices array*/
-					validChoices.add(letter); break middle;
-				}
-			}
-			/*remove "b" for now*/
-			validChoices.remove(0);
-			
-			for(int i = 0; i<items.size(); i++)
-			{
-				/*retrieve first choice FULL word*/
-				StringBuilder sb = new StringBuilder(items.get(i).toLowerCase());
-				/*get index of letter that needs to be wrapped*/
-				int index = sb.indexOf(validChoices.get(i));
-				//System.out.println(index);
-				/*reset first letter to uppercase by subtracting 32*/ 
-				sb.setCharAt(0, (char)(sb.charAt(0)-32));
-				String mod = sb.insert(index, "(").insert(index+2,")").toString();
-				output.append(mod+"\n");
-			}
-			output.append("\n(B)ack");
-			
-			/*dump all dynamically generated choices to GUI --add "b"*/
-			validChoices.add("b");
-			Game.validChoices = validChoices;
-			Game.textDescr.setText(output.toString());
-			//for(String s : Game.validChoices)System.out.print(s);System.out.println(); 
+			finishJSON();
 		}
 		catch(Exception e){e.printStackTrace();}
 		finally{}
@@ -245,6 +238,8 @@ class FStateMachine
 		try
 		{
 			JsonReader reader=null; JsonArray arr = null;
+			items.clear();
+
 			/*current game state decides which file to parse then read in top level object*/
 			switch(Game.state)
 			{
@@ -253,26 +248,83 @@ class FStateMachine
 				default:return;
 			}
 			
-			System.out.println(arr);
-			/*choose which object to read from JSON based on CharClass field in Model*/
-			switch(m.getCharClass())
-			{
+			//System.out.println(arr);			
+			List<JsonObject> x = arr.getValuesAs(JsonObject.class); //System.out.println(x);
 			
-			}
-			/*extract one object at a time -- trim quotes and check length isn't ridiculous*/
-			for(JsonObject o : arr.getValuesAs(JsonObject.class))
+			/*iterate through objects in profession*/
+			for(JsonObject obj : x)
 			{
-				System.out.println(o);
-				/*
-				String s = o.toString();
-				if(s.length()>25) throw new Exception("Value in JSON too long! Keep identifiers under 25 letters.");
-				items.add(s.substring(1,s.length()-1));*/
+				/* object contains chosen charclass*/
+				if(obj.containsKey(m.getCharClass()))
+				{
+					/*convert all JsonValues into Strings -- trim quotes and check length isn't ridiculous*/
+					for(JsonValue v : obj.getJsonArray(m.getCharClass()))
+					{
+						String s = v.toString();
+						if(s.length()>25) throw new Exception("Value in JSON too long! Keep inputs under 25 letters.");
+						items.add(s.substring(1,s.length()-1)); fullOptions.add(s.substring(1,s.length()-1));
+					}
+				}
 			}
+			finishJSON();
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
 		finally{}
+	}
+	
+	private void finishJSON() throws Exception
+	{			
+		/*generate GUI text choices*/
+		StringBuilder output = new StringBuilder();
+		
+		ArrayList<String> validChoices = new ArrayList<String>();
+		validChoices.add("b");
+		
+		/*dynamic processing actions -- must set Game.validChoices and Game.textDescr*/
+		/*iterate over choice Strings*/
+		for(String s : items)
+		{
+			/*check each letter in s against each letter in validChoice ArrayList*/
+			middle:for(int i = 0; i < s.length(); i++)
+			{
+				/*letter to be checked against valid array*/
+				String letter = String.valueOf(s.charAt(i)).toLowerCase();
+				/*check valid ArrayList for letter*/
+				for(int j = 0; j < validChoices.size(); j++)
+					/*match found -- try next letter*/
+					if(letter.equals(validChoices.get(j)))
+					{
+						continue middle;
+					}
+				/*no match found returns control to middle loop -- add to valid choices array*/
+				validChoices.add(letter); break middle;
+			}
+		}
+		/*remove "b" for now*/
+		validChoices.remove(0);
+		
+		for(int i = 0; i<items.size(); i++)
+		{
+			/*retrieve first choice FULL word*/
+			StringBuilder sb = new StringBuilder(items.get(i).toLowerCase());
+			/*get index of letter that needs to be wrapped*/
+			int index = sb.indexOf(validChoices.get(i));
+			//System.out.println(index);
+			/*reset first letter to uppercase by subtracting 32*/ 
+			sb.setCharAt(0, (char)(sb.charAt(0)-32));
+			String mod = sb.insert(index, "(").insert(index+2,")").toString();
+			output.append(mod+"\n");
+		}
+		output.append("\n(B)ack");
+		
+		/*dump all dynamically generated choices to GUI --add "b"*/
+		validChoices.add("b");
+		Game.validChoices = validChoices;
+		Game.textDescr.setText(output.toString());
+		//for(String s : Game.validChoices)System.out.print(s);System.out.println(); 
+
 	}
 }
