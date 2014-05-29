@@ -1,16 +1,14 @@
 package main;
 	
-import character.Const;
+import java.util.ArrayList;
+
 import javafx.application.Application;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.*;
 import javafx.event.EventHandler;
 import javafx.geometry.*;
 import main.FStateMachine;
@@ -20,12 +18,14 @@ public class Game extends Application
 {	
 	/*empty string when no valid key has been pressed*/
 	static String userInput = "";
+	/* area where options are displayed*/
 	static TextArea textDescr;
 	/*contains STATE represented by an integer*/
 	static int state = 0;
 	
 	/*contains array of valid choices based on what is presented to user*/
-	static String [] validChoices;
+	static ArrayList<String> validChoices = new ArrayList<String>();
+	//static String[] validChoices = new String[25];
 	
 	FStateMachine rpg = new FStateMachine();
 	
@@ -94,12 +94,13 @@ public class Game extends Application
 				public void handle(KeyEvent ke)
 				{
 					//System.out.println(ke.getCharacter());
-					validateInput(ke.getCharacter().toLowerCase());
-					rpg.checkState();
-					
+					/*call validateInput method to set userInput field if key is in validChoices array*/
+					/*returns true if userInput changed -- reduce CPU cycles compared to previous code*/
+					if(validateInput(ke.getCharacter().toLowerCase()))
+						rpg.checkState();				
 				}
 			};
-			/*KEYINPUT HANDLER*/
+			/*KEYINPUT HANDLER -- add identical handlers to scene and Text display area*/
 			scene.setOnKeyTyped(keyEvent);
 			textDescr.setOnKeyTyped(keyEvent);
 			/*SET STAGE UP*/
@@ -117,16 +118,17 @@ public class Game extends Application
 		}
 	}
 	
-	/*checks every key typed against validChoice array*/
-	private void validateInput(String ch)
+	/*checks every key typed against validChoice array -- return true if userInput changed*/
+	private boolean validateInput(String ch)
 	{
-		for(String s : validChoices)
+		for(String s : Game.validChoices)
 			if(ch.equals(s))
 			{
 				userInput=ch;
-				System.out.print(userInput);
-				return;
+				//System.out.print(userInput);
+				return true;
 			}
+		return false;
 	}
 
 }

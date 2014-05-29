@@ -1,0 +1,15 @@
+{
+"professions":[
+	{"Commoner":["Commoner","Peasant","Wench"]},
+	{"Fighter":["Fighter","Brawler","Warrior"]},
+	{"Ranger":["Ranger","Hunter"]},
+	{"Rogue":["Rogue","Petty Thief"]},
+	{"Trade":["BlackSmith","StoneMason"]},
+	{"Learned":["Scribe"]},
+	{"Healer":["Healer","Herbalist"]},
+	{"Bard":["Minstrel"]},
+	{"Mystical":["Conjurer","Magician","Witch"]},
+	{"Spiritual":["Friar","Monk","Nun"]},
+	{"Noble":["Baron"]}
+	]
+}
