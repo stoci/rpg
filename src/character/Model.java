@@ -3,14 +3,14 @@ package character;
 public class Model implements IActions
 {
 	//class
-	private int charClass;
+	private String charClass;
 	
 	//core attributes
 	private int strength,dexterity,twitch,constitution,intelligence,wisdom,commonSense,spirtuality,charisma,luck;
 	
 	//other attributes
-	private String name; 
-	private int age, race, status, level, xp, gender, alignment, profession, rank, gold;
+	private String name, race, gender, alignment, profession; 
+	private int age, status, level, xp, rank, gold;
 	
 	//points c=current m=max
 	private int cHitPoints, mHitPoints, cMagicPoints, mMagicPoints, 
@@ -134,11 +134,11 @@ public class Model implements IActions
 		this.age = age;
 	}
 
-	public int getRace() {
+	public String getRace() {
 		return race;
 	}
 
-	public void setRace(int race) {
+	public void setRace(String race) {
 		this.race = race;
 	}
 
@@ -166,27 +166,27 @@ public class Model implements IActions
 		this.xp = xp;
 	}
 
-	public int getGender() {
+	public String getGender() {
 		return gender;
 	}
 
-	public void setGender(int gender) {
+	public void setGender(String gender) {
 		this.gender = gender;
 	}
 
-	public int getAlignment() {
+	public String getAlignment() {
 		return alignment;
 	}
 
-	public void setAlignment(int alignment) {
+	public void setAlignment(String alignment) {
 		this.alignment = alignment;
 	}
 
-	public int getProfession() {
+	public String getProfession() {
 		return profession;
 	}
 
-	public void setProfession(int profession) {
+	public void setProfession(String profession) {
 		this.profession = profession;
 	}
 
@@ -326,11 +326,11 @@ public class Model implements IActions
 		this.resModifier = resModifier;
 	}
 
-	public int getCharClass() {
+	public String getCharClass() {
 		return charClass;
 	}
 
-	public void setCharClass(int charClass) {
+	public void setCharClass(String charClass) {
 		this.charClass = charClass;
 	}
 
