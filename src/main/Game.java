@@ -1,16 +1,14 @@
 package main;
 	
-import character.Const;
+import java.util.ArrayList;
+
 import javafx.application.Application;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.*;
 import javafx.event.EventHandler;
 import javafx.geometry.*;
 import main.FStateMachine;
@@ -25,7 +23,8 @@ public class Game extends Application
 	static int state = 0;
 	
 	/*contains array of valid choices based on what is presented to user*/
-	static String [] validChoices;
+	static ArrayList<String> validChoices = new ArrayList<String>();
+	//static String[] validChoices = new String[25];
 	
 	FStateMachine rpg = new FStateMachine();
 	
@@ -120,11 +119,11 @@ public class Game extends Application
 	/*checks every key typed against validChoice array*/
 	private void validateInput(String ch)
 	{
-		for(String s : validChoices)
+		for(String s : Game.validChoices)
 			if(ch.equals(s))
 			{
 				userInput=ch;
-				System.out.print(userInput);
+				//System.out.print(userInput);
 				return;
 			}
 	}
