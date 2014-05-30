@@ -226,7 +226,7 @@ class FStateMachine
 				if(s.length()>25) throw new Exception("Value in JSON too long! Keep identifiers under 25 letters.");
 				items.add(s.substring(1,s.length()-1)); fullOptions.add(s.substring(1,s.length()-1));
 			}
-			finishJSON();
+			finishJSON(output);
 		}
 		catch(Exception e){e.printStackTrace();}
 		finally{}
@@ -238,12 +238,15 @@ class FStateMachine
 		try
 		{
 			JsonReader reader=null; JsonArray arr = null;
+			/*generate GUI text choices*/
+			StringBuilder output = new StringBuilder();
 			items.clear();
 
 			/*current game state decides which file to parse then read in top level object*/
 			switch(Game.state)
 			{
 				case 5: reader=Json.createReader(new FileReader("./data/professions.json"));
+						output.append("Choose Profession!\n\n");
 						arr = reader.readObject().getJsonArray("professions");break;
 				default:return;
 			}
@@ -266,7 +269,7 @@ class FStateMachine
 					}
 				}
 			}
-			finishJSON();
+			finishJSON(output);
 		}
 		catch(Exception e)
 		{
@@ -275,11 +278,8 @@ class FStateMachine
 		finally{}
 	}
 	
-	private void finishJSON() throws Exception
-	{			
-		/*generate GUI text choices*/
-		StringBuilder output = new StringBuilder();
-		
+	private void finishJSON(StringBuilder output) throws Exception
+	{		
 		ArrayList<String> validChoices = new ArrayList<String>();
 		validChoices.add("b");
 		
