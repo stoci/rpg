@@ -22,6 +22,7 @@ public class Game extends Application
 	static TextArea textDescr;
 	/*contains STATE represented by an integer*/
 	static int state = 0;
+	static GridPane grid;
 	
 	/*contains array of valid choices based on what is presented to user*/
 	static ArrayList<String> validChoices = new ArrayList<String>();
@@ -43,8 +44,8 @@ public class Game extends Application
 			}*/
 
 			/*SET LAYOUT FOR SCENE -- USE GRIDLAYOUT*/
-			GridPane grid = new GridPane();
-			grid.gridLinesVisibleProperty();
+			grid = new GridPane();
+			grid.gridLinesVisibleProperty();grid.setStyle("-fx-background-color: gainsboro");
 			//grid.setAlignment(Pos.CENTER);
 			grid.setHgap(10);
 			grid.setVgap(10);

@@ -4,6 +4,12 @@ import java.io.*;
 import java.util.*;
 
 import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import character.*;
 
 import javax.json.*;
@@ -20,6 +26,8 @@ class FStateMachine
 	
 	/*used by JSON reader methods*/
 	ArrayList<String> items = new ArrayList<String>();
+	
+	TextField txtField;
 	
 	/*welcome screen -- hard-coded*/
 	void begin()
@@ -149,7 +157,7 @@ class FStateMachine
 	/*choose alignment*/
 	private void state6() 
 	{
-		Game.state=6;
+		Game.state=6;Game.textDescr.setVisible(true);
 		readJSONArray();
 		
 		/*iterate through validChoices to check if any equals userInput*/
@@ -168,9 +176,75 @@ class FStateMachine
 			}
 		}
 	}
+	
 	/*choose age*/
 	private void state7() 
 	{
+		Game.state=7;
+		Game.textDescr.setVisible(false); final HBox ageLayout = new HBox();
+		Label ageLabel = new Label("Enter Age: "); txtField = new TextField();
+		ageLabel.setStyle("-fx-font-size: 20px;");txtField.requestFocus();
+		ageLayout.getChildren().addAll(ageLabel,txtField);
+		Game.grid.add(ageLayout, 0, 1, 1, 1);
+		/*the only direct user input*/
+		EventHandler<KeyEvent> keyEvent = new EventHandler<KeyEvent>(){
+			public void handle(KeyEvent ke)
+			{
+				//System.out.println(ke.getCode());
+				if(ke.getCode().equals(KeyCode.ENTER))
+				{
+					//System.out.println("working!!");
+					int age = Integer.parseInt(txtField.getText());
+					if(age>0 && age<=99){ageLayout.setVisible(false);m.setAge(age);state8();}
+				}
+				if(ke.getCode().equals(KeyCode.ESCAPE)){ageLayout.setVisible(false);checkState(Game.state-1);}
+			}
+		};
+		txtField.setOnKeyReleased(keyEvent);
+		
+		Platform.runLater(new Runnable() {
+		     @Override
+		     public void run() {
+		         txtField.requestFocus();
+		     }
+		});
+	}
+	/*choose name*/
+	private void state8()
+	{
+		Game.state=8;
+		Game.textDescr.setVisible(false); final HBox nameLayout = new HBox();
+		Label nameLabel = new Label("Enter name: "); txtField = new TextField();
+		nameLabel.setStyle("-fx-font-size: 20px;");
+		nameLayout.getChildren().addAll(nameLabel,txtField);
+		Game.grid.add(nameLayout, 0, 1, 1, 1);
+		/*the only direct user input*/
+		EventHandler<KeyEvent> keyEvent = new EventHandler<KeyEvent>(){
+			public void handle(KeyEvent ke)
+			{
+				//System.out.println(ke.getCode());
+				if(ke.getCode().equals(KeyCode.ENTER))
+				{
+					//System.out.println("working!!");
+					String name = txtField.getText();
+					if(name.length()>0){nameLayout.setVisible(false);m.setName(name);state9();}
+				}
+				if(ke.getCode().equals(KeyCode.ESCAPE)){nameLayout.setVisible(false);checkState(Game.state-1);}
+			}
+		};
+		txtField.setOnKeyReleased(keyEvent);
+        
+		Platform.runLater(new Runnable() {
+		     @Override
+		     public void run() {
+		         txtField.requestFocus();
+		     }
+		});
+	}
+	
+	private void state9()
+	{
+		
 	}
 
 	/*state controller -- checks state field to determine which method/state to enter*/
@@ -187,6 +261,9 @@ class FStateMachine
 			case 4: state4(); break;
 			case 5: state5(); break;
 			case 6: state6(); break;
+			case 7: state7(); break;
+			case 8: state8(); break;
+			case 9: state9(); break;
 			default:return;
 		}
 	}
