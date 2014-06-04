@@ -244,7 +244,15 @@ class FStateMachine
 	
 	private void state9()
 	{
+		Game.state=9; Game.textDescr.setVisible(true);
+		Game.textDescr.setText("state 9\n\n(B)ack");
+		Game.validChoices.add("b");
 		
+		switch(Game.userInput)
+		{
+			case "b": clear();checkState(Game.state-1); break;	
+			default:return;
+		}
 	}
 
 	/*state controller -- checks state field to determine which method/state to enter*/
