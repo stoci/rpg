@@ -1,7 +1,10 @@
 package main;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.*;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -9,7 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import character.*;
 
 import javax.json.*;
@@ -27,6 +30,7 @@ class FStateMachine
 	/*used by JSON reader methods*/
 	ArrayList<String> items = new ArrayList<String>();
 	
+	/*used for direct user input states*/
 	TextField txtField;
 	
 	/*welcome screen -- hard-coded*/
@@ -72,7 +76,7 @@ class FStateMachine
 		{
 			if(Game.userInput.equals(Game.validChoices.get(i)))
 			{
-				System.out.println(fullOptions.get(i));
+				//System.out.println(fullOptions.get(i));
 				m.setRace(fullOptions.get(i));
 				clear();state3();break;
 			}
@@ -95,7 +99,7 @@ class FStateMachine
 		{
 			if(Game.userInput.equals(Game.validChoices.get(i)))
 			{
-				System.out.println(fullOptions.get(i));
+				//System.out.println(fullOptions.get(i));
 				m.setGender(fullOptions.get(i));
 				clear();state4();break;
 			}
@@ -118,7 +122,7 @@ class FStateMachine
 		{
 			if(Game.userInput.equals(Game.validChoices.get(i)))
 			{
-				System.out.println(fullOptions.get(i));
+				//System.out.println(fullOptions.get(i));
 				m.setCharClass(fullOptions.get(i));
 				clear();state5();break;
 			}
@@ -142,7 +146,7 @@ class FStateMachine
 		{
 			if(Game.userInput.equals(Game.validChoices.get(i)))
 			{
-				System.out.println(fullOptions.get(i));
+				//System.out.println(fullOptions.get(i));
 				m.setProfession(fullOptions.get(i));
 				clear();state6();break;
 			}
@@ -165,7 +169,7 @@ class FStateMachine
 		{
 			if(Game.userInput.equals(Game.validChoices.get(i)))
 			{
-				System.out.println(fullOptions.get(i));
+				//System.out.println(fullOptions.get(i));
 				m.setAlignment(fullOptions.get(i));
 				clear();state7();break;
 			}
@@ -181,11 +185,12 @@ class FStateMachine
 	private void state7() 
 	{
 		Game.state=7;
-		Game.textDescr.setVisible(false); final HBox ageLayout = new HBox();
+		Game.textDescr.setVisible(false); final VBox ageLayout = new VBox();
 		Label ageLabel = new Label("Enter Age: "); txtField = new TextField();
 		ageLabel.setStyle("-fx-font-size: 20px;");txtField.requestFocus();
 		ageLayout.getChildren().addAll(ageLabel,txtField);
 		Game.grid.add(ageLayout, 0, 1, 1, 1);
+		
 		/*the only direct user input*/
 		EventHandler<KeyEvent> keyEvent = new EventHandler<KeyEvent>(){
 			public void handle(KeyEvent ke)
@@ -194,14 +199,21 @@ class FStateMachine
 				if(ke.getCode().equals(KeyCode.ENTER))
 				{
 					//System.out.println("working!!");
-					int age = Integer.parseInt(txtField.getText());
-					if(age>0 && age<=99){ageLayout.setVisible(false);m.setAge(age);state8();}
+					//regex
+					boolean b = Pattern.matches("[0-9]{2}", txtField.getText());
+					if(b)
+					{
+						int age = Integer.parseInt(txtField.getText());
+						if(age>=17 && age<=88){ageLayout.setVisible(false);m.setAge(age);state8();}
+					}
+					else{}
+					
 				}
 				if(ke.getCode().equals(KeyCode.ESCAPE)){ageLayout.setVisible(false);checkState(Game.state-1);}
 			}
 		};
 		txtField.setOnKeyReleased(keyEvent);
-		
+		// sets focus on txtField
 		Platform.runLater(new Runnable() {
 		     @Override
 		     public void run() {
@@ -213,7 +225,7 @@ class FStateMachine
 	private void state8()
 	{
 		Game.state=8;
-		Game.textDescr.setVisible(false); final HBox nameLayout = new HBox();
+		Game.textDescr.setVisible(false); final VBox nameLayout = new VBox();
 		Label nameLabel = new Label("Enter name: "); txtField = new TextField();
 		nameLabel.setStyle("-fx-font-size: 20px;");
 		nameLayout.getChildren().addAll(nameLabel,txtField);
@@ -226,8 +238,12 @@ class FStateMachine
 				if(ke.getCode().equals(KeyCode.ENTER))
 				{
 					//System.out.println("working!!");
-					String name = txtField.getText();
-					if(name.length()>0){nameLayout.setVisible(false);m.setName(name);state9();}
+					// regex
+					boolean b = Pattern.matches("[1-9a-zA-Z]{1,14}", txtField.getText());
+					if(b)
+					{
+						nameLayout.setVisible(false);m.setName(txtField.getText());state9();
+					}
 				}
 				if(ke.getCode().equals(KeyCode.ESCAPE)){nameLayout.setVisible(false);checkState(Game.state-1);}
 			}
@@ -245,14 +261,20 @@ class FStateMachine
 	private void state9()
 	{
 		Game.state=9; Game.textDescr.setVisible(true);
-		Game.textDescr.setText("state 9\n\n(B)ack");
-		Game.validChoices.add("b");
+		Game.textDescr.setText("Ah.. yer Base Stats shall be . . .\n");
+		Game.validChoices.add("k");Game.validChoices.add("r");Game.validChoices.add("b");
 		
 		switch(Game.userInput)
 		{
 			case "b": clear();checkState(Game.state-1); break;	
 			default:return;
 		}
+	}
+	private void sleep(long x)
+	{
+		Thread t = new Thread();
+		try{TimeUnit.SECONDS.sleep(x);}
+		catch(Exception e){e.printStackTrace();}
 	}
 
 	/*state controller -- checks state field to determine which method/state to enter*/
