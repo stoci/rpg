@@ -6,13 +6,17 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.*;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import character.*;
 
 import javax.json.*;
@@ -258,23 +262,29 @@ class FStateMachine
 		});
 	}
 	
+	/*reroll state where base stats are chosen*/
 	private void state9()
 	{
 		Game.state=9; Game.textDescr.setVisible(true);
-		Game.textDescr.setText("Ah.. yer Base Stats shall be . . .\n");
+		Game.textDescr.setText("Ah.. yer Base Stats shall be");
+		
+		// Timeline object that runs on UI thread allowing timed events to occur
+		Timeline ellipsis = new Timeline(new KeyFrame(Duration.seconds(1),new EventHandler<ActionEvent>() {
+		    @Override
+		    public void handle(ActionEvent event) {
+		        //System.out.println("this is called every 1 seconds on UI thread");
+		        Game.textDescr.appendText(" .");
+		    }
+		}));ellipsis.setCycleCount(3);ellipsis.playFromStart();
 		Game.validChoices.add("k");Game.validChoices.add("r");Game.validChoices.add("b");
 		
 		switch(Game.userInput)
 		{
+			case "k": //next state
+			case "r": //reroll
 			case "b": clear();checkState(Game.state-1); break;	
 			default:return;
 		}
-	}
-	private void sleep(long x)
-	{
-		Thread t = new Thread();
-		try{TimeUnit.SECONDS.sleep(x);}
-		catch(Exception e){e.printStackTrace();}
 	}
 
 	/*state controller -- checks state field to determine which method/state to enter*/
