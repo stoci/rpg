@@ -26,7 +26,6 @@ public class Game extends Application
 	
 	/*contains array of valid choices based on what is presented to user*/
 	static ArrayList<String> validChoices = new ArrayList<String>();
-	//static String[] validChoices = new String[25];
 	
 	FStateMachine rpg = new FStateMachine();
 	
@@ -94,16 +93,17 @@ public class Game extends Application
 			EventHandler<KeyEvent> keyEvent = new EventHandler<KeyEvent>(){
 				public void handle(KeyEvent ke)
 				{
-					//System.out.println(ke.getCharacter());
+					//System.out.println(ke.getCode().toString().toLowerCase());
+					System.out.println(validChoices);
 					/*call validateInput method to set userInput field if key is in validChoices array*/
 					/*returns true if userInput changed -- reduce CPU cycles compared to previous code*/
-					if(validateInput(ke.getCharacter().toLowerCase()))
+					if(validateInput(ke.getCode().toString().toLowerCase()))
 						rpg.checkState();				
 				}
 			};
 			/*KEYINPUT HANDLER -- add identical handlers to scene and Text display area*/
-			scene.setOnKeyTyped(keyEvent);
-			textDescr.setOnKeyTyped(keyEvent);
+			scene.setOnKeyReleased(keyEvent);
+			//textDescr.setOnKeyReleased(keyEvent);
 			/*SET STAGE UP*/
 			//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			stage.setScene(scene);

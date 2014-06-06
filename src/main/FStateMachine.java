@@ -40,14 +40,14 @@ class FStateMachine
 	/*welcome screen -- hard-coded*/
 	void begin()
 	{
-		Game.textDescr.setText("Welcome to Proving Grounds!\n(C)ontinue\n(E)xit");
-		Game.validChoices.add("c"); Game.validChoices.add("e");
+		Game.textDescr.setText("Welcome to Proving Grounds!\n(C)ontinue\n(Q)uit");
+		Game.validChoices.add("c"); Game.validChoices.add("q");
 		Game.state=0;
-		
+
 		switch(Game.userInput)
 		{
 			case "c": clear(); state1(); break;
-			case "e": Platform.exit(); break;	
+			case "q": Platform.exit(); break;	
 			default:return;
 		}
 	}
@@ -55,15 +55,15 @@ class FStateMachine
 	/*main selection screen -- hard-coded*/
 	private void state1()
 	{
-		Game.textDescr.setText("Please select an action.\n(C)reate a character\n(E)nter the arena\n(B)ack");
-		Game.validChoices.add("c");Game.validChoices.add("e");Game.validChoices.add("b");
+		Game.textDescr.setText("Please select an action.\n(C)reate a character\n(E)nter the arena\n\n(Esc)ape");
+		Game.validChoices.add("c");Game.validChoices.add("e");Game.validChoices.add("escape");
 		Game.state=1;
 		
 		switch(Game.userInput)
 		{
 			case "c": clear(); state2(); break;
 			case "e": clear(); System.out.println("Entering the Arena!"); break;
-			case "b": clear(); checkState(Game.state-1); break;
+			case "escape": clear(); checkState(Game.state-1); break;
 			default:return;
 		}
 	}
@@ -84,7 +84,7 @@ class FStateMachine
 				m.setRace(fullOptions.get(i));
 				clear();state3();break;
 			}
-			else if(Game.userInput.equals("b"))
+			else if(Game.userInput.equals("escape"))
 			{
 				clear();
 				checkState(Game.state-1);break;
@@ -107,7 +107,7 @@ class FStateMachine
 				m.setGender(fullOptions.get(i));
 				clear();state4();break;
 			}
-			else if(Game.userInput.equals("b"))
+			else if(Game.userInput.equals("escape"))
 			{
 				clear();
 				checkState(Game.state-1);break;
@@ -130,7 +130,7 @@ class FStateMachine
 				m.setCharClass(fullOptions.get(i));
 				clear();state5();break;
 			}
-			else if(Game.userInput.equals("b"))
+			else if(Game.userInput.equals("escape"))
 			{
 				clear();
 				checkState(Game.state-1);break;
@@ -154,7 +154,7 @@ class FStateMachine
 				m.setProfession(fullOptions.get(i));
 				clear();state6();break;
 			}
-			else if(Game.userInput.equals("b"))
+			else if(Game.userInput.equals("escape"))
 			{
 				clear();
 				checkState(Game.state-1);break;
@@ -177,7 +177,7 @@ class FStateMachine
 				m.setAlignment(fullOptions.get(i));
 				clear();state7();break;
 			}
-			else if(Game.userInput.equals("b"))
+			else if(Game.userInput.equals("escape"))
 			{
 				clear();
 				checkState(Game.state-1);break;
@@ -276,13 +276,13 @@ class FStateMachine
 		        Game.textDescr.appendText(" .");
 		    }
 		}));ellipsis.setCycleCount(3);ellipsis.playFromStart();
-		Game.validChoices.add("k");Game.validChoices.add("r");Game.validChoices.add("b");
+		Game.validChoices.add("k");Game.validChoices.add("r");Game.validChoices.add("escape");
 		
 		switch(Game.userInput)
 		{
 			case "k": //next state
 			case "r": //reroll
-			case "b": clear();checkState(Game.state-1); break;	
+			case "escape": clear();checkState(Game.state-1); break;	
 			default:return;
 		}
 	}
@@ -312,6 +312,7 @@ class FStateMachine
 	private void clear()
 	{
 		Game.userInput="";
+		Game.validChoices.clear();
 		fullOptions.clear();
 	}
 	
@@ -398,7 +399,7 @@ class FStateMachine
 	private void finishJSON(StringBuilder output) throws Exception
 	{		
 		ArrayList<String> validChoices = new ArrayList<String>();
-		validChoices.add("b");
+		validChoices.add("escape");
 		
 		/*dynamic processing actions -- must set Game.validChoices and Game.textDescr*/
 		/*iterate over choice Strings*/
@@ -420,7 +421,7 @@ class FStateMachine
 				validChoices.add(letter); break middle;
 			}
 		}
-		/*remove "b" for now*/
+		/*remove "escape" for now*/
 		validChoices.remove(0);
 		
 		for(int i = 0; i<items.size(); i++)
@@ -435,10 +436,10 @@ class FStateMachine
 			String mod = sb.insert(index, "(").insert(index+2,")").toString();
 			output.append(mod+"\n");
 		}
-		output.append("\n(B)ack");
+		output.append("\n(Esc)ape");
 		
-		/*dump all dynamically generated choices to GUI --add "b"*/
-		validChoices.add("b");
+		/*dump all dynamically generated choices to GUI --add "escape"*/
+		validChoices.add("escape");
 		Game.validChoices = validChoices;
 		Game.textDescr.setText(output.toString());
 		//for(String s : Game.validChoices)System.out.print(s);System.out.println(); 
