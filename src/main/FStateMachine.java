@@ -37,6 +37,8 @@ class FStateMachine
 	/*used for direct user input states*/
 	TextField txtField;
 	
+	int numRolls = 5;
+	
 	/*welcome screen -- hard-coded*/
 	void begin()
 	{
@@ -269,19 +271,39 @@ class FStateMachine
 		Game.textDescr.setText("Ah.. yer Base Stats shall be");
 		
 		// Timeline object that runs on UI thread allowing timed events to occur
+		// remove for now
+		/*
 		Timeline ellipsis = new Timeline(new KeyFrame(Duration.seconds(1),new EventHandler<ActionEvent>() {
 		    @Override
 		    public void handle(ActionEvent event) {
 		        //System.out.println("this is called every 1 seconds on UI thread");
 		        Game.textDescr.appendText(" .");
 		    }
-		}));ellipsis.setCycleCount(3);ellipsis.playFromStart();
+		}));ellipsis.setCycleCount(3);ellipsis.playFromStart();*/
+		m.rollBaseStats(3, 4);
+		String output = String.format("\n\n# of rolls left:%3s\n\n%-12s%-10s%-10s\n%-12s%-10s%-10s\n"
+				+ "%-12s%-10s%-10s\n%-12s%-10s%-10s\n%-12s\n\n(K)eep\n(R)eroll\n\n(Esc)ape",
+				numRolls,"Physical","Mental","Ineffable","ST "+m.getStrength(),"IN "+m.getIntelligence(),
+				"SP "+m.getSpirtuality(),"TW "+m.getTwitch(),"WI "+m.getWisdom(),"CH "+m.getCharisma(),
+				"DX "+m.getDexterity(),"CS "+m.getCommonSense(),"LK "+m.getLuck(),"CN "+m.getConstitution());
+		Game.textDescr.appendText(output);
+		
 		Game.validChoices.add("k");Game.validChoices.add("r");Game.validChoices.add("escape");
 		
 		switch(Game.userInput)
 		{
-			case "k": //next state
-			case "r": //reroll
+			case "k": --numRolls;break;
+			case "r": --numRolls;break;
+			case "escape": clear();checkState(Game.state-1); break;	
+			default:return;
+		}
+	}
+
+	private void state10() {
+		Game.state=10; Game.textDescr.setText("State10\n\n(Esc)ape");
+		Game.validChoices.add("escape");
+		switch(Game.userInput)
+		{
 			case "escape": clear();checkState(Game.state-1); break;	
 			default:return;
 		}
