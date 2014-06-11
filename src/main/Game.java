@@ -1,7 +1,6 @@
 package main;
 	
 import java.util.ArrayList;
-
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -93,7 +92,7 @@ public class Game extends Application
 			EventHandler<KeyEvent> keyEvent = new EventHandler<KeyEvent>(){
 				public void handle(KeyEvent ke)
 				{
-					//System.out.println(ke.getCode().toString().toLowerCase());
+					System.out.println(ke.getCode().toString().toLowerCase());
 					System.out.println(validChoices);
 					/*call validateInput method to set userInput field if key is in validChoices array*/
 					/*returns true if userInput changed -- reduce CPU cycles compared to previous code*/
