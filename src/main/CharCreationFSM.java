@@ -1,32 +1,27 @@
 package main;
 
-import java.io.*;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.*;
+import java.util.regex.Pattern;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonValue;
+
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
-import character.*;
+import character.Model;
 
-import javax.json.*;
-
-/*finite state machine implementation of game states
- * build character progression: Race, gender, class, profession, alignment, age*/
-class FStateMachine {
-	/* points to character being created */
-	Model m;
-
+public class CharCreationFSM
+{
 	/* validChoices but contains full words instead of letters */
 	ArrayList<String> fullOptions = new ArrayList<String>();
 
@@ -37,77 +32,26 @@ class FStateMachine {
 	TextField txtField;
 
 	int numRolls = 5;
-
-	/* welcome screen -- hard-coded */
-	void begin() {
-		Game.textDescr
-				.setText("Welcome to Proving Grounds!\n(C)ontinue\n(Q)uit");
-		Game.validChoices.add("c");
-		Game.validChoices.add("q");
-		Game.state = 0;
-
-		switch (Game.userInput) {
-		case "c":
-			clear();
-			state1();
-			break;
-		case "q":
-			Platform.exit();
-			break;
-		default:
-			return;
-		}
-	}
-
-	/* main selection screen -- hard-coded */
-	private void state1() {
-		Game.textDescr
-				.setText("Please select an action.\n(C)reate a character\n(E)nter the arena\n\n(Esc)ape");
-		Game.validChoices.add("c");
-		Game.validChoices.add("e");
-		Game.validChoices.add("escape");
-		Game.state = 1;
-
-		switch (Game.userInput) {
-		case "c":
-			clear();
-			state2();
-			break;
-		case "e":
-			clear();
-			System.out.println("Entering the Arena!");
-			break;
-		case "escape":
-			clear();
-			checkState(Game.state - 1);
-			break;
-		default:
-			return;
-		}
-	}
-
+	
 	/*
 	 * Character creation reads JSON files from ./data directory -- NOT
 	 * hard-coded
 	 */
 	/* choose race */
-	private void state2() {
+	public void begin() {
 		Game.state = 2;
 		readJSONArray();
-		m = new Model();
+		MainFSM.m = new Model();
 
 		/* iterate through validChoices to check if any equals userInput */
 		for (int i = 0; i < Game.validChoices.size(); i++) {
 			if (Game.userInput.equals(Game.validChoices.get(i))) {
 				// System.out.println(fullOptions.get(i));
-				m.setRace(fullOptions.get(i));
+				MainFSM.m.setRace(fullOptions.get(i));
 				clear();
-				state3();
-				break;
+				state3();i=0;
 			} else if (Game.userInput.equals("escape")) {
-				clear();
-				checkState(Game.state - 1);
-				break;
+				clear();return;
 			}
 		}
 	}
@@ -120,15 +64,14 @@ class FStateMachine {
 		/* iterate through validChoices to check if any equals userInput */
 		for (int i = 0; i < Game.validChoices.size(); i++) {
 			if (Game.userInput.equals(Game.validChoices.get(i))) {
-				// System.out.println(fullOptions.get(i));
-				m.setGender(fullOptions.get(i));
+				//System.out.println(fullOptions.get(i));
+				MainFSM.m.setGender(fullOptions.get(i));
 				clear();
 				state4();
 				break;
 			} else if (Game.userInput.equals("escape")) {
 				clear();
-				checkState(Game.state - 1);
-				break;
+				return;
 			}
 		}
 	}
@@ -142,7 +85,7 @@ class FStateMachine {
 		for (int i = 0; i < Game.validChoices.size(); i++) {
 			if (Game.userInput.equals(Game.validChoices.get(i))) {
 				// System.out.println(fullOptions.get(i));
-				m.setCharClass(fullOptions.get(i));
+				MainFSM.m.setCharClass(fullOptions.get(i));
 				clear();
 				state5();
 				break;
@@ -164,14 +107,12 @@ class FStateMachine {
 		for (int i = 0; i < Game.validChoices.size(); i++) {
 			if (Game.userInput.equals(Game.validChoices.get(i))) {
 				// System.out.println(fullOptions.get(i));
-				m.setProfession(fullOptions.get(i));
+				MainFSM.m.setProfession(fullOptions.get(i));
 				clear();
 				state6();
 				break;
 			} else if (Game.userInput.equals("escape")) {
-				clear();
-				checkState(Game.state - 1);
-				break;
+				clear();return;
 			}
 		}
 	}
@@ -186,14 +127,12 @@ class FStateMachine {
 		for (int i = 0; i < Game.validChoices.size(); i++) {
 			if (Game.userInput.equals(Game.validChoices.get(i))) {
 				// System.out.println(fullOptions.get(i));
-				m.setAlignment(fullOptions.get(i));
+				MainFSM.m.setAlignment(fullOptions.get(i));
 				clear();
 				state7();
 				break;
 			} else if (Game.userInput.equals("escape")) {
-				clear();
-				checkState(Game.state - 1);
-				break;
+				clear();return;
 			}
 		}
 	}
@@ -222,7 +161,7 @@ class FStateMachine {
 						int age = Integer.parseInt(txtField.getText());
 						if (age >= 17 && age <= 88) {
 							ageLayout.setVisible(false);
-							m.setAge(age);
+							MainFSM.m.setAge(age);
 							state8();
 						}
 					} else {
@@ -231,7 +170,7 @@ class FStateMachine {
 				}
 				if (ke.getCode().equals(KeyCode.ESCAPE)) {
 					ageLayout.setVisible(false);
-					checkState(Game.state - 1);
+					return;
 				}
 			}
 		};
@@ -266,13 +205,13 @@ class FStateMachine {
 							txtField.getText());
 					if (b) {
 						nameLayout.setVisible(false);
-						m.setName(txtField.getText());
+						MainFSM.m.setName(txtField.getText());
 						state9();
 					}
 				}
 				if (ke.getCode().equals(KeyCode.ESCAPE)) {
 					nameLayout.setVisible(false);
-					checkState(Game.state - 1);
+					return;
 				}
 			}
 		};
@@ -303,18 +242,18 @@ class FStateMachine {
 		 * }));ellipsis.setCycleCount(3);ellipsis.playFromStart();
 		 */
 		if (numRolls >= 0) {
-			m.rollBaseStats(3, 4);
+			MainFSM.m.rollBaseStats(3, 4);
 		}
 		Game.textDescr.setText("Ah.. yer Base Stats shall be");
 		String output = String
 				.format("\n\n# of rolls left:%3s\n\n%-12s%-10s%-10s\n%-12s%-10s%-10s\n"
 						+ "%-12s%-10s%-10s\n%-12s%-10s%-10s\n%-12s\n\n(K)eep\n(R)eroll\n\n(Esc)ape",
 						numRolls, "Physical", "Mental", "Ineffable",
-						"ST " + m.getStrength(), "IN " + m.getIntelligence(),
-						"SP " + m.getSpirtuality(), "TW " + m.getTwitch(),
-						"WI " + m.getWisdom(), "CH " + m.getCharisma(), "DX "
-								+ m.getDexterity(), "CS " + m.getCommonSense(),
-						"LK " + m.getLuck(), "CN " + m.getConstitution());
+						"ST " + MainFSM.m.getStrength(), "IN " + MainFSM.m.getIntelligence(),
+						"SP " + MainFSM.m.getSpirtuality(), "TW " + MainFSM.m.getTwitch(),
+						"WI " + MainFSM.m.getWisdom(), "CH " + MainFSM.m.getCharisma(), "DX "
+								+ MainFSM.m.getDexterity(), "CS " + MainFSM.m.getCommonSense(),
+						"LK " + MainFSM.m.getLuck(), "CN " + MainFSM.m.getConstitution());
 		Game.textDescr.appendText(output);
 
 		Game.validChoices.add("k");
@@ -331,8 +270,7 @@ class FStateMachine {
 			state9();
 			break;
 		case "escape":
-			checkState(Game.state - 1);
-			break;
+			
 		default:
 			return;
 		}
@@ -346,8 +284,7 @@ class FStateMachine {
 		switch (Game.userInput) {
 		case "escape":
 			clear();
-			checkState(Game.state - 1);
-			break;
+			
 		default:
 			return;
 		}
@@ -362,14 +299,10 @@ class FStateMachine {
 		if (state.length == 0)
 			state = new int[] { Game.state };
 		switch (state[0]) {
-		case 0:
-			begin();
-			break;
 		case 1:
-			state1();
-			break;
+			return;
 		case 2:
-			state2();
+			begin();
 			break;
 		case 3:
 			state3();
@@ -493,12 +426,12 @@ class FStateMachine {
 			/* iterate through objects in profession */
 			for (JsonObject obj : x) {
 				/* object contains chosen charclass */
-				if (obj.containsKey(m.getCharClass())) {
+				if (obj.containsKey(MainFSM.m.getCharClass())) {
 					/*
 					 * convert all JsonValues into Strings -- trim quotes and
 					 * check length isn't ridiculous
 					 */
-					for (JsonValue v : obj.getJsonArray(m.getCharClass())) {
+					for (JsonValue v : obj.getJsonArray(MainFSM.m.getCharClass())) {
 						String s = v.toString();
 						if (s.length() > 25)
 							throw new Exception(

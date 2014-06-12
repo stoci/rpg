@@ -10,7 +10,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.event.EventHandler;
 import javafx.geometry.*;
-import main.FStateMachine;
+import main.MainFSM;
 
 
 public class Game extends Application 
@@ -26,7 +26,9 @@ public class Game extends Application
 	/*contains array of valid choices based on what is presented to user*/
 	static ArrayList<String> validChoices = new ArrayList<String>();
 	
-	FStateMachine rpg = new FStateMachine();
+	// necessary FSMs
+	MainFSM mainFSM = new MainFSM();
+	static CharCreationFSM charCreationFSM = new CharCreationFSM();
 	
 	public static void main(String[] args) { launch(args);}
 	
@@ -92,12 +94,16 @@ public class Game extends Application
 			EventHandler<KeyEvent> keyEvent = new EventHandler<KeyEvent>(){
 				public void handle(KeyEvent ke)
 				{
-					System.out.println(ke.getCode().toString().toLowerCase());
+					//System.out.println(ke.getCode().toString().toLowerCase());
 					System.out.println(validChoices);
 					/*call validateInput method to set userInput field if key is in validChoices array*/
 					/*returns true if userInput changed -- reduce CPU cycles compared to previous code*/
 					if(validateInput(ke.getCode().toString().toLowerCase()))
-						rpg.checkState();				
+					{
+						if(Game.state>=2 && Game.state<=10)charCreationFSM.checkState();
+						//else if
+						else mainFSM.checkState(state);
+					}
 				}
 			};
 			/*KEYINPUT HANDLER -- add identical handlers to scene and Text display area*/
@@ -111,7 +117,7 @@ public class Game extends Application
 			stage.show();
 			
 			/*enter the finite state machine*/
-			rpg.begin();
+			mainFSM.enter();
 			
 		} catch(Exception e) {
 			e.printStackTrace();
