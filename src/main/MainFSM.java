@@ -44,6 +44,7 @@ class MainFSM {
 		case "c":
 			clear();
 			Game.charCreationFSM.begin();
+			System.out.println("back inside mainFSM");
 			break;
 		case "e":
 			clear();

@@ -30,8 +30,11 @@ public class CharCreationFSM
 
 	/* used for direct user input states */
 	TextField txtField;
-
-	int numRolls = 5;
+	
+	private VBox inputLayout;
+	private Label inputLabel;
+	private int numRolls = 5;
+	
 	
 	/*
 	 * Character creation reads JSON files from ./data directory -- NOT
@@ -49,11 +52,15 @@ public class CharCreationFSM
 				// System.out.println(fullOptions.get(i));
 				MainFSM.m.setRace(fullOptions.get(i));
 				clear();
-				state3();i=0;
+				state3();
 			} else if (Game.userInput.equals("escape")) {
-				clear();return;
+				clear();		
+				Game.textDescr.setText("Please select an action.\n(C)reate a character\n(E)nter the arena\n\n(Esc)ape");
+				Game.validChoices.add("c");	Game.validChoices.add("e");	Game.validChoices.add("escape");
+				Game.state = 1;return;
 			}
 		}
+		
 	}
 
 	/* choose gender */
@@ -70,7 +77,8 @@ public class CharCreationFSM
 				state4();
 				break;
 			} else if (Game.userInput.equals("escape")) {
-				clear();
+				clear();Game.state = 2;	readJSONArray();
+				MainFSM.m = new Model();
 				return;
 			}
 		}
@@ -90,9 +98,8 @@ public class CharCreationFSM
 				state5();
 				break;
 			} else if (Game.userInput.equals("escape")) {
-				clear();
-				checkState(Game.state - 1);
-				break;
+				clear();Game.state = 3;
+				readJSONArray(); return;
 			}
 		}
 
@@ -112,7 +119,9 @@ public class CharCreationFSM
 				state6();
 				break;
 			} else if (Game.userInput.equals("escape")) {
-				clear();return;
+				clear();
+				Game.state = 4;
+				readJSONArray();return;
 			}
 		}
 	}
@@ -132,7 +141,9 @@ public class CharCreationFSM
 				state7();
 				break;
 			} else if (Game.userInput.equals("escape")) {
-				clear();return;
+				clear();
+				Game.state = 5;
+				readJSONObject();return;
 			}
 		}
 	}
@@ -141,13 +152,7 @@ public class CharCreationFSM
 	private void state7() {
 		Game.state = 7;
 		Game.textDescr.setVisible(false);
-		final VBox ageLayout = new VBox();
-		Label ageLabel = new Label("Enter Age: ");
-		txtField = new TextField();
-		ageLabel.setStyle("-fx-font-size: 20px;");
-		txtField.requestFocus();
-		ageLayout.getChildren().addAll(ageLabel, txtField);
-		Game.grid.add(ageLayout, 0, 1, 1, 1);
+		initLayout();
 
 		/* the only direct user input */
 		EventHandler<KeyEvent> keyEvent = new EventHandler<KeyEvent>() {
@@ -160,7 +165,7 @@ public class CharCreationFSM
 					if (b) {
 						int age = Integer.parseInt(txtField.getText());
 						if (age >= 17 && age <= 88) {
-							ageLayout.setVisible(false);
+							inputLayout.setVisible(false);
 							MainFSM.m.setAge(age);
 							state8();
 						}
@@ -169,7 +174,13 @@ public class CharCreationFSM
 
 				}
 				if (ke.getCode().equals(KeyCode.ESCAPE)) {
-					ageLayout.setVisible(false);
+					inputLayout.getChildren().clear();
+					Game.grid.getChildren().remove(inputLayout);
+					Game.state = 6;
+					//txtField.setVisible(false);inputLabel.setVisible(false);
+					//inputLayout.setVisible(false);
+					//Game.textDescr.setVisible(true);
+					readJSONArray();
 					return;
 				}
 			}
@@ -188,12 +199,8 @@ public class CharCreationFSM
 	private void state8() {
 		Game.state = 8;
 		Game.textDescr.setVisible(false);
-		final VBox nameLayout = new VBox();
-		Label nameLabel = new Label("Enter name: ");
-		txtField = new TextField();
-		nameLabel.setStyle("-fx-font-size: 20px;");
-		nameLayout.getChildren().addAll(nameLabel, txtField);
-		Game.grid.add(nameLayout, 0, 1, 1, 1);
+		initLayout();
+		
 		/* the only direct user input */
 		EventHandler<KeyEvent> keyEvent = new EventHandler<KeyEvent>() {
 			public void handle(KeyEvent ke) {
@@ -204,25 +211,17 @@ public class CharCreationFSM
 					boolean b = Pattern.matches("[1-9a-zA-Z]{1,14}",
 							txtField.getText());
 					if (b) {
-						nameLayout.setVisible(false);
+						inputLayout.setVisible(false);
 						MainFSM.m.setName(txtField.getText());
 						state9();
 					}
 				}
 				if (ke.getCode().equals(KeyCode.ESCAPE)) {
-					nameLayout.setVisible(false);
-					return;
+					Game.state = 7;inputLabel.setText("Enter age: ");txtField.requestFocus();
 				}
 			}
 		};
 		txtField.setOnKeyReleased(keyEvent);
-
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				txtField.requestFocus();
-			}
-		});
 	}
 
 	/* reroll state where base stats are chosen */
@@ -270,7 +269,10 @@ public class CharCreationFSM
 			state9();
 			break;
 		case "escape":
-			
+			Game.state = 8;
+			Game.textDescr.setVisible(false);
+			inputLayout.setVisible(true);txtField.clear();txtField.requestFocus();
+			return;
 		default:
 			return;
 		}
@@ -299,8 +301,6 @@ public class CharCreationFSM
 		if (state.length == 0)
 			state = new int[] { Game.state };
 		switch (state[0]) {
-		case 1:
-			return;
 		case 2:
 			begin();
 			break;
@@ -503,5 +503,26 @@ public class CharCreationFSM
 		// for(String s :
 		// Game.validChoices)System.out.print(s);System.out.println();
 
+	}
+	
+	// used for managing textfield/label pair in age/name
+	private void initLayout()
+	{
+		txtField = new TextField();
+		inputLayout = new VBox();
+		// age
+		if(Game.state==7)
+		{
+			inputLabel = new Label("Enter age: ");
+		}
+		// name
+		else
+		{
+			inputLabel = new Label("Enter name: ");
+		}
+		inputLabel.setStyle("-fx-font-size: 20px;");
+		inputLayout.getChildren().addAll(inputLabel, txtField);
+		Game.grid.add(inputLayout, 0, 1, 1, 1);
+		txtField.requestFocus();
 	}
 }
