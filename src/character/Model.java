@@ -5,7 +5,7 @@ public class Model implements IActions
 	//class
 	private String charClass;
 	
-	//core attributes
+	//base stats
 	private int strength,dexterity,twitch,constitution,intelligence,wisdom,commonSense,spirtuality,charisma,luck;
 	
 	//other attributes
@@ -36,6 +36,21 @@ public class Model implements IActions
 	public void useMagic() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	// method to easily roll all base stats for Model instance
+	public void rollBaseStats(int numOfDice,int numOfSides)
+	{
+		this.strength = Const.rollDice(numOfDice,numOfSides);
+		this.dexterity = Const.rollDice(numOfDice, numOfSides);
+		this.twitch = Const.rollDice(numOfDice, numOfSides);
+		this.intelligence = Const.rollDice(numOfDice, numOfSides);
+		this.wisdom = Const.rollDice(numOfDice, numOfSides);
+		this.commonSense = Const.rollDice(numOfDice, numOfSides);
+		this.spirtuality = Const.rollDice(numOfDice, numOfSides);
+		this.charisma = Const.rollDice(numOfDice, numOfSides);
+		this.luck = Const.rollDice(numOfDice, numOfSides);
+		this.constitution = Const.rollDice(numOfDice, numOfSides);
 	}
 
 	public int getStrength() {
@@ -333,5 +348,6 @@ public class Model implements IActions
 	public void setCharClass(String charClass) {
 		this.charClass = charClass;
 	}
+
 
 }
