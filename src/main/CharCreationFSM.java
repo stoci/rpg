@@ -11,7 +11,6 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -34,6 +33,57 @@ public class CharCreationFSM
 	private VBox inputLayout;
 	private Label inputLabel;
 	private int numRolls = 5;
+	
+	// set up event handlers for user input sections
+	private EventHandler<KeyEvent> keyEventAge = new EventHandler<KeyEvent>() {
+		public void handle(KeyEvent ke) {
+//			System.out.println(ke.getCode()+" state7");
+			if (ke.getCode().equals(KeyCode.ENTER)) {
+				// System.out.println("working!!");
+				// regex
+				boolean b = Pattern.matches("[0-9]{2}", txtField.getText());
+				if (b) {
+					int age = Integer.parseInt(txtField.getText());
+					if (age >= 17 && age <= 88) {
+						inputLayout.setVisible(false);
+						MainFSM.m.setAge(age);
+						state8();
+					}
+				} else {
+				}
+
+			}
+			if (ke.getCode().equals(KeyCode.ESCAPE)) {
+				Game.state = 6;
+				inputLayout.setVisible(false);
+				Game.textDescr.setVisible(true);
+				readJSONArray();
+				return;
+			}
+		}
+	};
+	private EventHandler<KeyEvent> keyEventName = new EventHandler<KeyEvent>() {
+		public void handle(KeyEvent ke) {
+//			System.out.println(ke.getCode()+" state8");
+			if (ke.getCode().equals(KeyCode.ENTER)) {
+				// System.out.println("working!!");
+				// regex
+				boolean b = Pattern.matches("[1-9a-zA-Z]{1,14}",
+						txtField.getText());
+				if (b) {
+					MainFSM.m.setName(txtField.getText());
+					state9();
+				}
+			}
+			if (ke.getCode().equals(KeyCode.ESCAPE)) {
+				Game.state = 7;
+				inputLabel.setText("Enter age: ");
+				txtField.clear();txtField.requestFocus();
+				txtField.setOnKeyReleased(keyEventAge);
+				return;
+			}
+		}
+	};
 	
 	
 	/*
@@ -129,7 +179,6 @@ public class CharCreationFSM
 	/* choose alignment */
 	private void state6() {
 		Game.state = 6;
-		Game.textDescr.setVisible(true);
 		readJSONArray();
 
 		/* iterate through validChoices to check if any equals userInput */
@@ -141,6 +190,7 @@ public class CharCreationFSM
 				state7();
 				break;
 			} else if (Game.userInput.equals("escape")) {
+				System.out.println("state6 escape");
 				clear();
 				Game.state = 5;
 				readJSONObject();return;
@@ -148,85 +198,29 @@ public class CharCreationFSM
 		}
 	}
 
-	/* choose age */
+	/* input age */
 	private void state7() {
 		Game.state = 7;
-		Game.textDescr.setVisible(false);
 		initLayout();
 
-		/* the only direct user input */
-		EventHandler<KeyEvent> keyEvent = new EventHandler<KeyEvent>() {
-			public void handle(KeyEvent ke) {
-				// System.out.println(ke.getCode());
-				if (ke.getCode().equals(KeyCode.ENTER)) {
-					// System.out.println("working!!");
-					// regex
-					boolean b = Pattern.matches("[0-9]{2}", txtField.getText());
-					if (b) {
-						int age = Integer.parseInt(txtField.getText());
-						if (age >= 17 && age <= 88) {
-							inputLayout.setVisible(false);
-							MainFSM.m.setAge(age);
-							state8();
-						}
-					} else {
-					}
-
-				}
-				if (ke.getCode().equals(KeyCode.ESCAPE)) {
-					inputLayout.getChildren().clear();
-					Game.grid.getChildren().remove(inputLayout);
-					Game.state = 6;
-					//txtField.setVisible(false);inputLabel.setVisible(false);
-					//inputLayout.setVisible(false);
-					//Game.textDescr.setVisible(true);
-					readJSONArray();
-					return;
-				}
-			}
-		};
-		txtField.setOnKeyReleased(keyEvent);
-		// sets focus on txtField
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				txtField.requestFocus();
-			}
-		});
+		if(Game.state==8)txtField.setOnKeyReleased(keyEventName);
+		else if(Game.state==7)txtField.setOnKeyReleased(keyEventAge);
 	}
 
-	/* choose name */
+	/* input name */
 	private void state8() {
 		Game.state = 8;
-		Game.textDescr.setVisible(false);
 		initLayout();
 		
-		/* the only direct user input */
-		EventHandler<KeyEvent> keyEvent = new EventHandler<KeyEvent>() {
-			public void handle(KeyEvent ke) {
-				// System.out.println(ke.getCode());
-				if (ke.getCode().equals(KeyCode.ENTER)) {
-					// System.out.println("working!!");
-					// regex
-					boolean b = Pattern.matches("[1-9a-zA-Z]{1,14}",
-							txtField.getText());
-					if (b) {
-						inputLayout.setVisible(false);
-						MainFSM.m.setName(txtField.getText());
-						state9();
-					}
-				}
-				if (ke.getCode().equals(KeyCode.ESCAPE)) {
-					Game.state = 7;inputLabel.setText("Enter age: ");txtField.requestFocus();
-				}
-			}
-		};
-		txtField.setOnKeyReleased(keyEvent);
+
+		if(Game.state==8)txtField.setOnKeyReleased(keyEventName);
+		else if(Game.state==7)txtField.setOnKeyReleased(keyEventAge);
 	}
 
 	/* reroll state where base stats are chosen */
 	private void state9() {
 		Game.state = 9;
+		inputLayout.setVisible(false);
 		Game.textDescr.setVisible(true);
 
 		// Timeline object that runs on UI thread allowing timed events to occur
@@ -271,7 +265,8 @@ public class CharCreationFSM
 		case "escape":
 			Game.state = 8;
 			Game.textDescr.setVisible(false);
-			inputLayout.setVisible(true);txtField.clear();txtField.requestFocus();
+			inputLayout.setVisible(true);
+			clear();txtField.clear();txtField.requestFocus();
 			return;
 		default:
 			return;
@@ -508,6 +503,7 @@ public class CharCreationFSM
 	// used for managing textfield/label pair in age/name
 	private void initLayout()
 	{
+		Game.textDescr.setVisible(false);
 		txtField = new TextField();
 		inputLayout = new VBox();
 		// age
@@ -522,7 +518,7 @@ public class CharCreationFSM
 		}
 		inputLabel.setStyle("-fx-font-size: 20px;");
 		inputLayout.getChildren().addAll(inputLabel, txtField);
-		Game.grid.add(inputLayout, 0, 1, 1, 1);
+		if(!Game.grid.getChildren().contains(inputLayout))Game.grid.add(inputLayout, 0, 1, 1, 1);
 		txtField.requestFocus();
 	}
 }

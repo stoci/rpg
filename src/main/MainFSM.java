@@ -2,7 +2,6 @@ package main;
 
 import javafx.application.Platform;
 import character.Model;
-import main.CharCreationFSM;
 
 /*finite state machine implementation of game states
  * build character progression: Race, gender, class, profession, alignment, age*/
@@ -44,7 +43,7 @@ class MainFSM {
 		case "c":
 			clear();
 			Game.charCreationFSM.begin();
-			System.out.println("back inside mainFSM");
+//			System.out.println("back inside mainFSM");
 			break;
 		case "e":
 			clear();
