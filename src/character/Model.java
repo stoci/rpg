@@ -52,6 +52,14 @@ public class Model implements IActions
 		this.luck = Const.rollDice(numOfDice, numOfSides);
 		this.constitution = Const.rollDice(numOfDice, numOfSides);
 	}
+	
+	// returns mean of base stats
+	public double meanBaseStats()
+	{
+		double mean = (this.strength+this.dexterity+this.twitch+this.intelligence+this.wisdom
+				+this.commonSense+this.spirtuality+this.charisma+this.luck+this.constitution)/10.0;
+		return mean;
+	}
 
 	public int getStrength() {
 		return strength;

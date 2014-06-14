@@ -32,7 +32,7 @@ public class CharCreationFSM
 	
 	private VBox inputLayout;
 	private Label inputLabel;
-	private int numRolls = 5;
+	private int numRolls = 50;
 	
 	// set up event handlers for user input sections
 	private EventHandler<KeyEvent> keyEventAge = new EventHandler<KeyEvent>() {
@@ -47,17 +47,16 @@ public class CharCreationFSM
 					if (age >= 17 && age <= 88) {
 						inputLayout.setVisible(false);
 						MainFSM.m.setAge(age);
-						state8();
+						checkState(Game.state=8);
 					}
 				} else {
 				}
 
 			}
 			if (ke.getCode().equals(KeyCode.ESCAPE)) {
-				Game.state = 6;
 				inputLayout.setVisible(false);
 				Game.textDescr.setVisible(true);
-				readJSONArray();
+				checkState(Game.state=6);
 				return;
 			}
 		}
@@ -87,8 +86,8 @@ public class CharCreationFSM
 	
 	
 	/*
-	 * Character creation reads JSON files from ./data directory -- NOT
-	 * hard-coded
+	 * Character creation reads JSON files from ./data directory -- 
+	 * NOT hard-coded
 	 */
 	/* choose race */
 	public void begin() {
@@ -101,13 +100,11 @@ public class CharCreationFSM
 			if (Game.userInput.equals(Game.validChoices.get(i))) {
 				// System.out.println(fullOptions.get(i));
 				MainFSM.m.setRace(fullOptions.get(i));
-				clear();
-				state3();
+				clear();checkState(Game.state = 3);
+				return;
 			} else if (Game.userInput.equals("escape")) {
-				clear();		
-				Game.textDescr.setText("Please select an action.\n(C)reate a character\n(E)nter the arena\n\n(Esc)ape");
-				Game.validChoices.add("c");	Game.validChoices.add("e");	Game.validChoices.add("escape");
-				Game.state = 1;return;
+				clear();Game.mainFSM.checkState(Game.state=1);
+				return;
 			}
 		}
 		
@@ -123,12 +120,11 @@ public class CharCreationFSM
 			if (Game.userInput.equals(Game.validChoices.get(i))) {
 				//System.out.println(fullOptions.get(i));
 				MainFSM.m.setGender(fullOptions.get(i));
-				clear();
-				state4();
-				break;
+				clear();checkState(Game.state=4);
+				return;
 			} else if (Game.userInput.equals("escape")) {
-				clear();Game.state = 2;	readJSONArray();
-				MainFSM.m = new Model();
+				clear();MainFSM.m = new Model();
+				checkState(Game.state=2);
 				return;
 			}
 		}
@@ -144,12 +140,11 @@ public class CharCreationFSM
 			if (Game.userInput.equals(Game.validChoices.get(i))) {
 				// System.out.println(fullOptions.get(i));
 				MainFSM.m.setCharClass(fullOptions.get(i));
-				clear();
-				state5();
-				break;
+				clear();checkState(Game.state=5); 
+				return;
 			} else if (Game.userInput.equals("escape")) {
-				clear();Game.state = 3;
-				readJSONArray(); return;
+				clear();checkState(Game.state=3); 
+				return;
 			}
 		}
 
@@ -165,13 +160,11 @@ public class CharCreationFSM
 			if (Game.userInput.equals(Game.validChoices.get(i))) {
 				// System.out.println(fullOptions.get(i));
 				MainFSM.m.setProfession(fullOptions.get(i));
-				clear();
-				state6();
-				break;
+				clear();checkState(Game.state=6);
+				return;
 			} else if (Game.userInput.equals("escape")) {
-				clear();
-				Game.state = 4;
-				readJSONArray();return;
+				clear();checkState(Game.state=4);
+				return;
 			}
 		}
 	}
@@ -186,14 +179,11 @@ public class CharCreationFSM
 			if (Game.userInput.equals(Game.validChoices.get(i))) {
 				// System.out.println(fullOptions.get(i));
 				MainFSM.m.setAlignment(fullOptions.get(i));
-				clear();
-				state7();
-				break;
+				clear();checkState(Game.state=7);
+				return;
 			} else if (Game.userInput.equals("escape")) {
-				System.out.println("state6 escape");
-				clear();
-				Game.state = 5;
-				readJSONObject();return;
+				clear();checkState(Game.state=5);
+				return;
 			}
 		}
 	}
@@ -234,19 +224,19 @@ public class CharCreationFSM
 		 * Game.textDescr.appendText(" ."); }
 		 * }));ellipsis.setCycleCount(3);ellipsis.playFromStart();
 		 */
-		if (numRolls >= 0) {
+		if (numRolls > 0) {
 			MainFSM.m.rollBaseStats(3, 4);
 		}
 		Game.textDescr.setText("Ah.. yer Base Stats shall be");
 		String output = String
 				.format("\n\n# of rolls left:%3s\n\n%-12s%-10s%-10s\n%-12s%-10s%-10s\n"
-						+ "%-12s%-10s%-10s\n%-12s%-10s%-10s\n%-12s\n\n(K)eep\n(R)eroll\n\n(Esc)ape",
+						+ "%-12s%-10s%-10s\n%-12s%-10s%-10s\n%-12s%-10s\n\n(K)eep\n(R)eroll\n\n(Esc)ape",
 						numRolls, "Physical", "Mental", "Ineffable",
 						"ST " + MainFSM.m.getStrength(), "IN " + MainFSM.m.getIntelligence(),
 						"SP " + MainFSM.m.getSpirtuality(), "TW " + MainFSM.m.getTwitch(),
 						"WI " + MainFSM.m.getWisdom(), "CH " + MainFSM.m.getCharisma(), "DX "
 								+ MainFSM.m.getDexterity(), "CS " + MainFSM.m.getCommonSense(),
-						"LK " + MainFSM.m.getLuck(), "CN " + MainFSM.m.getConstitution());
+						"LK " + MainFSM.m.getLuck(), "CN " + MainFSM.m.getConstitution(), "AVG "+MainFSM.m.meanBaseStats());
 		Game.textDescr.appendText(output);
 
 		Game.validChoices.add("k");
@@ -255,32 +245,32 @@ public class CharCreationFSM
 		// stats set OR reroll OR exit
 		switch (Game.userInput) {
 		case "k":
-			state10();
+			checkState(Game.state=10);
 			break;
 		case "r":
-			--numRolls;
-			clear();
-			state9();
+			if(numRolls==0)break;
+			clear();numRolls--;checkState();
 			break;
 		case "escape":
 			Game.state = 8;
 			Game.textDescr.setVisible(false);
 			inputLayout.setVisible(true);
-			clear();txtField.clear();txtField.requestFocus();
-			return;
+			clear();txtField.clear();txtField.requestFocus();numRolls=50;
+			break;
 		default:
-			return;
+			break;
 		}
+		return;
 	}
 
 	/* other attributes determined */
 	private void state10() {
 		Game.state = 10;
-		Game.textDescr.setText("State10\n\n(Esc)ape");
+		Game.textDescr.setText("State10 Placeholder\n\n(Esc)ape");
 		Game.validChoices.add("escape");
 		switch (Game.userInput) {
 		case "escape":
-			clear();
+			clear();checkState(Game.state=9);
 			
 		default:
 			return;

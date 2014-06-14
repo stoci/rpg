@@ -25,7 +25,7 @@ public class Game extends Application
 	static ArrayList<String> validChoices = new ArrayList<String>();
 	
 	// necessary FSMs -- add more as they are developed
-	MainFSM mainFSM = new MainFSM();
+	static MainFSM mainFSM = new MainFSM();
 	static CharCreationFSM charCreationFSM = new CharCreationFSM();
 	
 	// GUI elements
