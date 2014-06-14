@@ -19,8 +19,7 @@ class MainFSM {
 
 		switch (Game.userInput) {
 		case "c":
-			clear();
-			state1();
+			clear();checkState(Game.state=1);
 			break;
 		case "q":
 			Platform.exit();
@@ -46,12 +45,12 @@ class MainFSM {
 //			System.out.println("back inside mainFSM");
 			break;
 		case "e":
-			clear();
-			System.out.println("Entering the Arena!");
+//			clear();
+//			System.out.println("Entering the Arena!");
 			break;
 		case "escape":
 			clear();
-			checkState(Game.state - 1);
+			checkState(Game.state=0);
 			break;
 		default:
 			return;
