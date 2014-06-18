@@ -245,7 +245,7 @@ public class CharCreationFSM
 		// stats set OR reroll OR exit
 		switch (Game.userInput) {
 		case "k":
-			checkState(Game.state=10);
+			clear();checkState(Game.state=10);
 			break;
 		case "r":
 			if(numRolls==0)break;
@@ -266,12 +266,41 @@ public class CharCreationFSM
 	/* other attributes determined */
 	private void state10() {
 		Game.state = 10;
-		Game.textDescr.setText("State10 Placeholder\n\n(Esc)ape");
+		Game.textDescr.setText("..and ye shall begin with these. . .");
+		String output = String.format("\n\n%-15s%-3s%-15s%-3s\n%-15s%-3s\n%-15s%-3s\n%-15s%-3s%-15s%-3s\n\n%22s\n\n"
+				+ "(K)eep\n(R)eroll\n\n(Esc)ape",
+				"Mystic Points",99,"Hit Points",99,"Prayer Points",99,"Skill Points",99,
+				"Bard Points",99,"Gold Pieces",99,"Armor Class "+99);
+		Game.textDescr.appendText(output);
+		
+		Game.validChoices.add("k");
+		Game.validChoices.add("r");
+		Game.validChoices.add("escape");
+		switch (Game.userInput) {
+		case "k":
+			clear();checkState(Game.state=11);
+			break;
+		case "r":
+			clear();checkState();
+			break;
+		case "escape":
+			clear();checkState(Game.state=9);
+			break;
+		default:
+			break;
+		}
+		return;
+	}
+	
+	private void state11()
+	{
+		Game.state = 11;
+		Game.textDescr.setText("State11 Placeholder\n\n(Esc)ape");
 		Game.validChoices.add("escape");
 		switch (Game.userInput) {
 		case "escape":
-			clear();checkState(Game.state=9);
-			
+			clear();checkState(Game.state=10);
+
 		default:
 			return;
 		}
@@ -312,6 +341,9 @@ public class CharCreationFSM
 			break;
 		case 10:
 			state10();
+			break;
+		case 11:
+			state11();
 			break;
 		default:
 			return;
