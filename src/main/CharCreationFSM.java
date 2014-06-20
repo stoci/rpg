@@ -21,18 +21,28 @@ import character.Model;
 
 public class CharCreationFSM
 {
-	/* validChoices but contains full words instead of letters */
+	//constants
+	private final int NUMROLLS=50;
+	
+	// validChoices but contains full words instead of letters
 	ArrayList<String> fullOptions = new ArrayList<String>();
 
-	/* used by JSON reader methods */
+	// used by JSON reader methods
 	ArrayList<String> items = new ArrayList<String>();
 
-	/* used for direct user input states */
+	// used for direct user input states
 	TextField txtField;
 	
+	//can be updated independent of state
 	private VBox inputLayout;
 	private Label inputLabel;
-	private int numRolls = 50;
+	
+	// number of rolls allowed for states 9 and 10
+	private int numRolls9 = NUMROLLS;
+	private int prevNumRolls9;
+	private int numRolls10 = NUMROLLS;
+	private int prevNumRolls10;
+	
 	
 	// set up event handlers for user input sections
 	private EventHandler<KeyEvent> keyEventAge = new EventHandler<KeyEvent>() {
@@ -92,7 +102,6 @@ public class CharCreationFSM
 	/* choose race */
 	public void begin() {
 		Game.state = 2;
-		readJSONArray();
 		MainFSM.m = new Model();
 
 		/* iterate through validChoices to check if any equals userInput */
@@ -107,13 +116,12 @@ public class CharCreationFSM
 				return;
 			}
 		}
-		
+		readJSONArray();
 	}
 
 	/* choose gender */
 	private void state3() {
 		Game.state = 3;
-		readJSONArray();
 
 		/* iterate through validChoices to check if any equals userInput */
 		for (int i = 0; i < Game.validChoices.size(); i++) {
@@ -128,12 +136,12 @@ public class CharCreationFSM
 				return;
 			}
 		}
+		readJSONArray();
 	}
 
 	/* choose class */
 	private void state4() {
 		Game.state = 4;
-		readJSONArray();
 
 		/* iterate through validChoices to check if any equals userInput */
 		for (int i = 0; i < Game.validChoices.size(); i++) {
@@ -147,13 +155,13 @@ public class CharCreationFSM
 				return;
 			}
 		}
+		readJSONArray();
 
 	}
 
 	/* choose profession */
 	private void state5() {
 		Game.state = 5;
-		readJSONObject();
 
 		/* iterate through validChoices to check if any equals userInput */
 		for (int i = 0; i < Game.validChoices.size(); i++) {
@@ -167,12 +175,13 @@ public class CharCreationFSM
 				return;
 			}
 		}
+		readJSONObject();
 	}
 
 	/* choose alignment */
 	private void state6() {
 		Game.state = 6;
-		readJSONArray();
+
 
 		/* iterate through validChoices to check if any equals userInput */
 		for (int i = 0; i < Game.validChoices.size(); i++) {
@@ -186,6 +195,7 @@ public class CharCreationFSM
 				return;
 			}
 		}
+		readJSONArray();
 	}
 
 	/* input age */
@@ -224,86 +234,89 @@ public class CharCreationFSM
 		 * Game.textDescr.appendText(" ."); }
 		 * }));ellipsis.setCycleCount(3);ellipsis.playFromStart();
 		 */
-		if (numRolls > 0) {
-			MainFSM.m.rollBaseStats(3, 4);
-		}
-		Game.textDescr.setText("Ah.. yer Base Stats shall be");
-		String output = String
-				.format("\n\n# of rolls left:%3s\n\n%-12s%-10s%-10s\n%-12s%-10s%-10s\n"
-						+ "%-12s%-10s%-10s\n%-12s%-10s%-10s\n%-12s%-10s\n\n(K)eep\n(R)eroll\n\n(Esc)ape",
-						numRolls, "Physical", "Mental", "Ineffable",
-						"ST " + MainFSM.m.getStrength(), "IN " + MainFSM.m.getIntelligence(),
-						"SP " + MainFSM.m.getSpirtuality(), "TW " + MainFSM.m.getTwitch(),
-						"WI " + MainFSM.m.getWisdom(), "CH " + MainFSM.m.getCharisma(), "DX "
-								+ MainFSM.m.getDexterity(), "CS " + MainFSM.m.getCommonSense(),
-						"LK " + MainFSM.m.getLuck(), "CN " + MainFSM.m.getConstitution(), "AVG "+MainFSM.m.meanBaseStats());
-		Game.textDescr.appendText(output);
-
 		Game.validChoices.add("k");
 		Game.validChoices.add("r");
 		Game.validChoices.add("escape");
 		// stats set OR reroll OR exit
 		switch (Game.userInput) {
 		case "k":
-			clear();checkState(Game.state=10);
-			break;
+			clear();
+			prevNumRolls9 = numRolls9;
+			checkState(Game.state=10);
+			return;
 		case "r":
-			if(numRolls==0)break;
-			clear();numRolls--;checkState();
-			break;
+			if(numRolls9==0)return;
+			clear();numRolls9--;checkState();
+			return;
 		case "escape":
 			Game.state = 8;
 			Game.textDescr.setVisible(false);
 			inputLayout.setVisible(true);
-			clear();txtField.clear();txtField.requestFocus();numRolls=50;
-			break;
+			clear();txtField.clear();txtField.requestFocus();numRolls9=NUMROLLS;
+			return;
 		default:
 			break;
 		}
-		return;
+		
+		if ((prevNumRolls9!=numRolls9) && numRolls9 > 0) {
+			MainFSM.m.rollBaseStats(3, 3, 2);
+		}
+		Game.textDescr.setText("Ah.. yer Base Stats shall be. . .");
+		String output = String
+				.format("\n\n# of rolls left:%3s\n\n%-12s%-10s%-10s\n%-12s%-10s%-10s\n"
+						+ "%-12s%-10s%-10s\n%-12s%-10s%-10s\n%-12s%-10s\n\n(K)eep\n(R)eroll\n\n(Esc)ape",
+						numRolls9, "Physical", "Mental", "Ineffable",
+						"ST " + MainFSM.m.getStrength(), "IN " + MainFSM.m.getIntelligence(),
+						"SP " + MainFSM.m.getSpirtuality(), "TW " + MainFSM.m.getTwitch(),
+						"WI " + MainFSM.m.getWisdom(), "CH " + MainFSM.m.getCharisma(), "DX "
+								+ MainFSM.m.getDexterity(), "CS " + MainFSM.m.getCommonSense(),
+						"LK " + MainFSM.m.getLuck(), "CN " + MainFSM.m.getConstitution(), "AVG "+MainFSM.m.meanBaseStats());
+		Game.textDescr.appendText(output);
 	}
 
 	/* other attributes determined */
 	private void state10() {
 		Game.state = 10;
-		Game.textDescr.setText("..and ye shall begin with these. . .");
-		String output = String.format("\n\n%-15s%-3s%-15s%-3s\n%-15s%-3s\n%-15s%-3s\n%-15s%-3s%-15s%-3s\n\n%22s\n\n"
-				+ "(K)eep\n(R)eroll\n\n(Esc)ape",
-				"Mystic Points",99,"Hit Points",99,"Prayer Points",99,"Skill Points",99,
-				"Bard Points",99,"Gold Pieces",99,"Armor Class "+99);
-		Game.textDescr.appendText(output);
-		
 		Game.validChoices.add("k");
 		Game.validChoices.add("r");
 		Game.validChoices.add("escape");
 		switch (Game.userInput) {
 		case "k":
+			prevNumRolls10 = numRolls10;
 			clear();checkState(Game.state=11);
-			break;
+			return;
 		case "r":
-			clear();checkState();
-			break;
+			if(numRolls10==0)return;
+			clear();numRolls10--;checkState();
+			return;
 		case "escape":
-			clear();checkState(Game.state=9);
-			break;
+			clear();numRolls10=NUMROLLS;
+			checkState(Game.state=9);
+			return;
 		default:
 			break;
 		}
-		return;
+		Game.textDescr.setText("..and ye shall begin with these. . .");
+		String output = String.format("\n\n# of rolls left:%3s\n\n%-15s%-3s%-15s%-3s\n%-15s%-3s\n%-15s%-3s"
+				+ "\n%-15s%-3s%-15s%-3s\n\n%22s\n\n(K)eep\n(R)eroll\n\n(Esc)ape",numRolls10,
+				"Mystic Points",99,"Hit Points",99,"Prayer Points",99,"Skill Points",99,
+				"Bard Points",99,"Gold Pieces",99,"Armor Class "+99);
+		Game.textDescr.appendText(output);
 	}
 	
 	private void state11()
 	{
 		Game.state = 11;
-		Game.textDescr.setText("State11 Placeholder\n\n(Esc)ape");
 		Game.validChoices.add("escape");
 		switch (Game.userInput) {
 		case "escape":
+			Game.textDescr.setVisible(true);
 			clear();checkState(Game.state=10);
-
-		default:
 			return;
+		default:
+			break;
 		}
+		Game.textDescr.setText("State11 Placeholder\n\n(Esc)ape");
 	}
 
 	/*
