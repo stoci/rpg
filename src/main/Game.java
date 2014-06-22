@@ -71,8 +71,7 @@ public class Game extends Application
 					/*returns true if userInput changed -- reduce CPU cycles compared to previous code*/
 					if(validateInput(ke.getCode().toString().toLowerCase()))
 					{
-						if(Game.state>=2 && Game.state<=10)charCreationFSM.checkState();
-						//else if
+						if(Game.state>=2 && Game.state<=11)charCreationFSM.checkState();
 						else mainFSM.checkState(state);
 					}
 				}
@@ -114,14 +113,14 @@ public class Game extends Application
 		/*IMAGE DISPLAY AREA*/
 		img = new ImageView();
 		img.setImage(new Image("http://www.tentonhammer.com/image/view/248528"));
-		img.setFitHeight(800); img.setFitWidth(600); img.setPreserveRatio(true);
+		img.setFitHeight(750); img.setFitWidth(550); img.setPreserveRatio(true);
 		grid.add(img,1,1,1,1);
 	}
 	private void initializeTextDisplay()
 	{
 		/*TEXT DESCRIPTION AREA -- DISPLAY ONLY*/
 		textDescr = new TextArea();
-		textDescr.setStyle("-fx-font-size: 20px;-fx-font-family: monospace");
+		textDescr.setStyle("-fx-font-size: 19px;-fx-font-family: monospace");
 		textDescr.setMinWidth(400); textDescr.setEditable(false);
 		grid.add(textDescr,0,1,1,1);
 	}
