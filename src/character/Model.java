@@ -39,18 +39,18 @@ public class Model implements IActions
 	}
 	
 	// method to easily roll all base stats for Model instance
-	public void rollBaseStats(int numOfDice,int numOfSides)
+	public void rollBaseStats(int numOfDice,int numOfSides, int modifier)
 	{
-		this.strength = Const.rollDice(numOfDice,numOfSides);
-		this.dexterity = Const.rollDice(numOfDice, numOfSides);
-		this.twitch = Const.rollDice(numOfDice, numOfSides);
-		this.intelligence = Const.rollDice(numOfDice, numOfSides);
-		this.wisdom = Const.rollDice(numOfDice, numOfSides);
-		this.commonSense = Const.rollDice(numOfDice, numOfSides);
-		this.spirtuality = Const.rollDice(numOfDice, numOfSides);
-		this.charisma = Const.rollDice(numOfDice, numOfSides);
-		this.luck = Const.rollDice(numOfDice, numOfSides);
-		this.constitution = Const.rollDice(numOfDice, numOfSides);
+		this.strength = Const.rollDice(numOfDice,numOfSides,modifier);
+		this.dexterity = Const.rollDice(numOfDice, numOfSides,modifier);
+		this.twitch = Const.rollDice(numOfDice, numOfSides,modifier);
+		this.intelligence = Const.rollDice(numOfDice, numOfSides,modifier);
+		this.wisdom = Const.rollDice(numOfDice, numOfSides,modifier);
+		this.commonSense = Const.rollDice(numOfDice, numOfSides,modifier);
+		this.spirtuality = Const.rollDice(numOfDice, numOfSides,modifier);
+		this.charisma = Const.rollDice(numOfDice, numOfSides,modifier);
+		this.luck = Const.rollDice(numOfDice, numOfSides,modifier);
+		this.constitution = Const.rollDice(numOfDice, numOfSides,modifier);
 	}
 	
 	// returns mean of base stats
