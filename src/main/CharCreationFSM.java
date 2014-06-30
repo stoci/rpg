@@ -266,11 +266,11 @@ public class CharCreationFSM
 				.format("\n\n# of rolls left:%3s\n\n%-12s%-10s%-10s\n%-12s%-10s%-10s\n"
 						+ "%-12s%-10s%-10s\n%-12s%-10s%-10s\n%-12s%-10s\n\n(K)eep\n(R)eroll\n\n(Esc)ape",
 						numRolls9, "Physical", "Mental", "Ineffable",
-						"ST " + MainFSM.m.getStrength(), "IN " + MainFSM.m.getIntelligence(),
-						"SP " + MainFSM.m.getSpirtuality(), "TW " + MainFSM.m.getTwitch(),
-						"WI " + MainFSM.m.getWisdom(), "CH " + MainFSM.m.getCharisma(), "DX "
-								+ MainFSM.m.getDexterity(), "CS " + MainFSM.m.getCommonSense(),
-						"LK " + MainFSM.m.getLuck(), "CN " + MainFSM.m.getConstitution(), "AVG "+MainFSM.m.meanBaseStats());
+						"ST " + MainFSM.m.getcStrength(), "IN " + MainFSM.m.getcIntelligence(),
+						"SP " + MainFSM.m.getcSpirituality(), "TW " + MainFSM.m.getcTwitch(),
+						"WI " + MainFSM.m.getcWisdom(), "CH " + MainFSM.m.getcCharisma(), "DX "
+								+ MainFSM.m.getcDexterity(), "CS " + MainFSM.m.getcCommonSense(),
+						"LK " + MainFSM.m.getcLuck(), "CN " + MainFSM.m.getcConstitution(), "AVG "+MainFSM.m.meanBaseStats());
 		Game.textDescr.appendText(output);
 	}
 

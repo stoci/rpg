@@ -8,7 +8,7 @@ import character.Model;
 
 /*finite state machine implementation of game states
  * build character progression: Race, gender, class, profession, alignment, age*/
-class MainFSM {
+public class MainFSM {
 	
 	/* points to character being created in CharCreationFSM*/
 	static Model m;
@@ -17,6 +17,10 @@ class MainFSM {
 	static ArrayList<BonusWrapper> bonuses = new ArrayList<BonusWrapper>();
 	
 	
+	public static ArrayList<BonusWrapper> getBonuses() {
+		return bonuses;
+	}
+
 	/* welcome screen -- hard-coded */
 	public void enter() {
 		new JsonParser().parseBonusFile();

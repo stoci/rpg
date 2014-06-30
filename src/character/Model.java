@@ -1,12 +1,19 @@
 package character;
 
+import java.util.ArrayList;
+
+import main.MainFSM;
+
 public class Model implements IActions
 {
 	//class
 	private String charClass;
 	
 	//base stats
-	private int strength,dexterity,twitch,constitution,intelligence,wisdom,commonSense,spirtuality,charisma,luck;
+	private int strength,dexterity,twitch,constitution,intelligence,wisdom,commonSense,spirituality,charisma,luck;
+	
+	//current stats
+	private int cStrength,cDexterity,cTwitch,cConstitution,cIntelligence,cWisdom,cCommonSense,cSpirituality,cCharisma,cLuck;
 	
 	//other attributes
 	private String name, race, gender, alignment, profession; 
@@ -47,17 +54,41 @@ public class Model implements IActions
 		this.intelligence = Const.rollDice(numOfDice, numOfSides,modifier);
 		this.wisdom = Const.rollDice(numOfDice, numOfSides,modifier);
 		this.commonSense = Const.rollDice(numOfDice, numOfSides,modifier);
-		this.spirtuality = Const.rollDice(numOfDice, numOfSides,modifier);
+		this.spirituality = Const.rollDice(numOfDice, numOfSides,modifier);
 		this.charisma = Const.rollDice(numOfDice, numOfSides,modifier);
 		this.luck = Const.rollDice(numOfDice, numOfSides,modifier);
 		this.constitution = Const.rollDice(numOfDice, numOfSides,modifier);
+		addBaseStatBonus();
 	}
 	
+	private void addBaseStatBonus() {
+		// TODO Auto-generated method stub
+		
+		ArrayList<BonusWrapper> bonuses = MainFSM.getBonuses();
+		//adds base stat plus bonuses from race. Still needs to address gender, profession, alignment, age.
+		
+		for(int i = 0; i < bonuses.size(); i++) {
+				if(bonuses.get(i).getName().contains(race)) {
+					cStrength = strength + bonuses.get(i).getSt();
+					cDexterity = dexterity + bonuses.get(i).getDx();
+					cTwitch = twitch + bonuses.get(i).getTw();
+					cIntelligence = intelligence + bonuses.get(i).getIn();
+					cWisdom = wisdom + bonuses.get(i).getWi();
+					cCommonSense = commonSense + bonuses.get(i).getCs();
+					cSpirituality = spirituality + bonuses.get(i).getSp();
+					cCharisma = charisma + bonuses.get(i).getCh();
+					cLuck = luck + bonuses.get(i).getLk();
+					cConstitution = constitution + bonuses.get(i).getCn();
+				}
+			
+		}
+	}
+
 	// returns mean of base stats
 	public double meanBaseStats()
 	{
 		double mean = (this.strength+this.dexterity+this.twitch+this.intelligence+this.wisdom
-				+this.commonSense+this.spirtuality+this.charisma+this.luck+this.constitution)/10.0;
+				+this.commonSense+this.spirituality+this.charisma+this.luck+this.constitution)/10.0;
 		return mean;
 	}
 
@@ -118,11 +149,11 @@ public class Model implements IActions
 	}
 
 	public int getSpirtuality() {
-		return spirtuality;
+		return spirituality;
 	}
 
 	public void setSpirtuality(int spirtuality) {
-		this.spirtuality = spirtuality;
+		this.spirituality = spirtuality;
 	}
 
 	public int getCharisma() {
@@ -355,6 +386,86 @@ public class Model implements IActions
 
 	public void setCharClass(String charClass) {
 		this.charClass = charClass;
+	}
+
+	public int getcStrength() {
+		return cStrength;
+	}
+
+	public void setcStrength(int cStrength) {
+		this.cStrength = cStrength;
+	}
+
+	public int getcDexterity() {
+		return cDexterity;
+	}
+
+	public void setcDexterity(int cDexterity) {
+		this.cDexterity = cDexterity;
+	}
+
+	public int getcTwitch() {
+		return cTwitch;
+	}
+
+	public void setcTwitch(int cTwitch) {
+		this.cTwitch = cTwitch;
+	}
+
+	public int getcConstitution() {
+		return cConstitution;
+	}
+
+	public void setcConstitution(int cConstitution) {
+		this.cConstitution = cConstitution;
+	}
+
+	public int getcIntelligence() {
+		return cIntelligence;
+	}
+
+	public void setcIntelligence(int cIntelligence) {
+		this.cIntelligence = cIntelligence;
+	}
+
+	public int getcWisdom() {
+		return cWisdom;
+	}
+
+	public void setcWisdom(int cWisdom) {
+		this.cWisdom = cWisdom;
+	}
+
+	public int getcCommonSense() {
+		return cCommonSense;
+	}
+
+	public void setcCommonSense(int cCommonSense) {
+		this.cCommonSense = cCommonSense;
+	}
+
+	public int getcSpirituality() {
+		return cSpirituality;
+	}
+
+	public void setcSpirituality(int cSpirtuality) {
+		this.cSpirituality = cSpirtuality;
+	}
+
+	public int getcCharisma() {
+		return cCharisma;
+	}
+
+	public void setcCharisma(int cCharisma) {
+		this.cCharisma = cCharisma;
+	}
+
+	public int getcLuck() {
+		return cLuck;
+	}
+
+	public void setcLuck(int cLuck) {
+		this.cLuck = cLuck;
 	}
 
 
