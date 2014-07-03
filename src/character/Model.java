@@ -58,30 +58,61 @@ public class Model implements IActions
 		this.charisma = Const.rollDice(numOfDice, numOfSides,modifier);
 		this.luck = Const.rollDice(numOfDice, numOfSides,modifier);
 		this.constitution = Const.rollDice(numOfDice, numOfSides,modifier);
-		addBaseStatBonus();
+		cStrength = strength;
+		cDexterity = dexterity;
+		cTwitch = twitch;
+		cIntelligence = intelligence;
+		cWisdom = wisdom;
+		cCommonSense = commonSense;
+		cSpirituality = spirituality;
+		cCharisma = charisma;
+		cLuck = luck;
+		cConstitution = constitution;
+		findBonus();
 	}
-	
-	private void addBaseStatBonus() {
-		// TODO Auto-generated method stub
-		
+	//Finds the correct bonus for race, gender, profession, and alignment. Needs to add age
+	private void findBonus() {
 		ArrayList<BonusWrapper> bonuses = MainFSM.getBonuses();
-		//adds base stat plus bonuses from race. Still needs to address gender, profession, alignment, age.
-		
-		for(int i = 0; i < bonuses.size(); i++) {
-				if(bonuses.get(i).getName().contains(race)) {
-					cStrength = strength + bonuses.get(i).getSt();
-					cDexterity = dexterity + bonuses.get(i).getDx();
-					cTwitch = twitch + bonuses.get(i).getTw();
-					cIntelligence = intelligence + bonuses.get(i).getIn();
-					cWisdom = wisdom + bonuses.get(i).getWi();
-					cCommonSense = commonSense + bonuses.get(i).getCs();
-					cSpirituality = spirituality + bonuses.get(i).getSp();
-					cCharisma = charisma + bonuses.get(i).getCh();
-					cLuck = luck + bonuses.get(i).getLk();
-					cConstitution = constitution + bonuses.get(i).getCn();
-				}
-			
+		int count = 0; 
+		while(bonuses.get(count).getType().contains("Race")) {
+			if(bonuses.get(count).getName().contains(race)) {
+				addToBase(bonuses.get(count));
+			}
+			count++;
 		}
+		while(bonuses.get(count).getType().contains("Gender")) {
+			if(bonuses.get(count).getName().contains(gender)) {
+				addToBase(bonuses.get(count));
+			}
+			count++;
+		}
+		while(bonuses.get(count).getType().contains("Profession")) {
+			if(bonuses.get(count).getName().contains(profession)) {
+				addToBase(bonuses.get(count));
+			}
+			count++;
+		}
+		while(bonuses.get(count).getType().contains("Alignment")) {
+			if(bonuses.get(count).getName().contains(alignment)) {
+				addToBase(bonuses.get(count));
+			}
+			count++;
+		}
+		
+	}
+
+	private void addToBase(BonusWrapper toBeAdded) {
+		
+		cStrength = cStrength + toBeAdded.getSt();
+		cDexterity = cDexterity + toBeAdded.getDx();
+		cTwitch = cTwitch + toBeAdded.getTw();
+		cIntelligence = cIntelligence + toBeAdded.getIn();
+		cWisdom = cWisdom + toBeAdded.getWi();
+		cCommonSense = cCommonSense + toBeAdded.getCs();
+		cSpirituality = cSpirituality + toBeAdded.getSp();
+		cCharisma = cCharisma + toBeAdded.getCh();
+		cLuck = cLuck + toBeAdded.getLk();
+		cConstitution = cConstitution + toBeAdded.getCn();
 	}
 
 	// returns mean of base stats
