@@ -70,7 +70,7 @@ public class Model implements IActions
 		cConstitution = constitution;
 		findBonus();
 	}
-	//Finds the correct bonus for race, gender, profession, and alignment. Needs to add age
+	//Finds the correct bonus for race, gender, profession, alignment, and age
 	private void findBonus() {
 		ArrayList<BonusWrapper> bonuses = MainFSM.getBonuses();
 		int count = 0; 
