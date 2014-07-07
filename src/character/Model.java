@@ -98,7 +98,23 @@ public class Model implements IActions
 			}
 			count++;
 		}
-		
+		while(bonuses.get(count).getType().contains("Age")) {
+			if(count == bonuses.size() - 1) {
+				addToBase(bonuses.get(count));
+				break;
+			}
+			String trim = bonuses.get(count).getName();
+			String trim2 = bonuses.get(count + 1).getName();
+			trim = trim.substring(1, trim.length() - 1);
+			trim2 = trim2.substring(1, trim2.length() - 1);
+			int lowerAge = Integer.parseInt(trim);
+			int upperAge = Integer.parseInt(trim2);
+			if(age >= lowerAge && age < upperAge) {
+				addToBase(bonuses.get(count));
+				break;
+			}
+			count++;
+		}
 	}
 
 	private void addToBase(BonusWrapper toBeAdded) {
