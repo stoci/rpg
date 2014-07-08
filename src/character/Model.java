@@ -68,68 +68,10 @@ public class Model implements IActions
 		cCharisma = charisma;
 		cLuck = luck;
 		cConstitution = constitution;
-		findBonus();
+		
 	}
 	//Finds the correct bonus for race, gender, profession, alignment, and age
-	private void findBonus() {
-		ArrayList<BonusWrapper> bonuses = MainFSM.getBonuses();
-		int count = 0; 
-		while(bonuses.get(count).getType().contains("Race")) {
-			if(bonuses.get(count).getName().contains(race)) {
-				addToBase(bonuses.get(count));
-			}
-			count++;
-		}
-		while(bonuses.get(count).getType().contains("Gender")) {
-			if(bonuses.get(count).getName().contains(gender)) {
-				addToBase(bonuses.get(count));
-			}
-			count++;
-		}
-		while(bonuses.get(count).getType().contains("Profession")) {
-			if(bonuses.get(count).getName().contains(profession)) {
-				addToBase(bonuses.get(count));
-			}
-			count++;
-		}
-		while(bonuses.get(count).getType().contains("Alignment")) {
-			if(bonuses.get(count).getName().contains(alignment)) {
-				addToBase(bonuses.get(count));
-			}
-			count++;
-		}
-		while(bonuses.get(count).getType().contains("Age")) {
-			if(count == bonuses.size() - 1) {
-				addToBase(bonuses.get(count));
-				break;
-			}
-			String trim = bonuses.get(count).getName();
-			String trim2 = bonuses.get(count + 1).getName();
-			trim = trim.substring(1, trim.length() - 1);
-			trim2 = trim2.substring(1, trim2.length() - 1);
-			int lowerAge = Integer.parseInt(trim);
-			int upperAge = Integer.parseInt(trim2);
-			if(age >= lowerAge && age < upperAge) {
-				addToBase(bonuses.get(count));
-				break;
-			}
-			count++;
-		}
-	}
-
-	private void addToBase(BonusWrapper toBeAdded) {
-		
-		cStrength = cStrength + toBeAdded.getSt();
-		cDexterity = cDexterity + toBeAdded.getDx();
-		cTwitch = cTwitch + toBeAdded.getTw();
-		cIntelligence = cIntelligence + toBeAdded.getIn();
-		cWisdom = cWisdom + toBeAdded.getWi();
-		cCommonSense = cCommonSense + toBeAdded.getCs();
-		cSpirituality = cSpirituality + toBeAdded.getSp();
-		cCharisma = cCharisma + toBeAdded.getCh();
-		cLuck = cLuck + toBeAdded.getLk();
-		cConstitution = cConstitution + toBeAdded.getCn();
-	}
+	
 
 	// returns mean of base stats
 	public double meanBaseStats()
@@ -199,8 +141,8 @@ public class Model implements IActions
 		return spirituality;
 	}
 
-	public void setSpirtuality(int spirtuality) {
-		this.spirituality = spirtuality;
+	public void setSpirituality(int spirituality) {
+		this.spirituality = spirituality;
 	}
 
 	public int getCharisma() {
@@ -495,8 +437,8 @@ public class Model implements IActions
 		return cSpirituality;
 	}
 
-	public void setcSpirituality(int cSpirtuality) {
-		this.cSpirituality = cSpirtuality;
+	public void setcSpirituality(int cSpirituality) {
+		this.cSpirituality = cSpirituality;
 	}
 
 	public int getcCharisma() {

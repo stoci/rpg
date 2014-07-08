@@ -17,6 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import character.BonusWrapper;
 import character.Model;
 
 public class CharCreationFSM
@@ -260,6 +261,7 @@ public class CharCreationFSM
 		
 		if ((prevNumRolls9!=numRolls9) && numRolls9 > 0) {
 			MainFSM.m.rollBaseStats(3, 3, 2);
+			findBonus();
 		}
 		Game.textDescr.setText("Ah.. yer Base Stats shall be. . .");
 		String output = String
@@ -273,7 +275,66 @@ public class CharCreationFSM
 						"LK " + MainFSM.m.getcLuck(), "CN " + MainFSM.m.getcConstitution(), "AVG "+MainFSM.m.meanBaseStats());
 		Game.textDescr.appendText(output);
 	}
+	// Iterates through provided bonuses to select and add to the current stat.
+	private void findBonus() {
+		ArrayList<BonusWrapper> bonuses = MainFSM.getBonuses();
+		int count = 0; 
+		while(bonuses.get(count).getType().contains("Race")) {
+			if(bonuses.get(count).getName().contains(MainFSM.m.getRace())) {
+				addToBase(bonuses.get(count));
+			}
+			count++;
+		}
+		while(bonuses.get(count).getType().contains("Gender")) {
+			if(bonuses.get(count).getName().contains(MainFSM.m.getGender())) {
+				addToBase(bonuses.get(count));
+			}
+			count++;
+		}
+		while(bonuses.get(count).getType().contains("Profession")) {
+			if(bonuses.get(count).getName().contains(MainFSM.m.getProfession())) {
+				addToBase(bonuses.get(count));
+			}
+			count++;
+		}
+		while(bonuses.get(count).getType().contains("Alignment")) {
+			if(bonuses.get(count).getName().contains(MainFSM.m.getAlignment())) {
+				addToBase(bonuses.get(count));
+			}
+			count++;
+		}
+		while(bonuses.get(count).getType().contains("Age")) {
+			if(count == bonuses.size() - 1) {
+				addToBase(bonuses.get(count));
+				break;
+			}
+			String trim = bonuses.get(count).getName();
+			String trim2 = bonuses.get(count + 1).getName();
+			trim = trim.substring(1, trim.length() - 1);
+			trim2 = trim2.substring(1, trim2.length() - 1);
+			int lowerAge = Integer.parseInt(trim);
+			int upperAge = Integer.parseInt(trim2);
+			if(MainFSM.m.getAge() >= lowerAge && MainFSM.m.getAge() < upperAge) {
+				addToBase(bonuses.get(count));
+				break;
+			}
+			count++;
+		}
+	}
 
+	private void addToBase(BonusWrapper toBeAdded) {
+		
+		MainFSM.m.setcStrength(MainFSM.m.getcStrength() + toBeAdded.getSt());
+		MainFSM.m.setcDexterity(MainFSM.m.getcDexterity() + toBeAdded.getDx());
+		MainFSM.m.setcTwitch(MainFSM.m.getcTwitch() + toBeAdded.getTw());
+		MainFSM.m.setcIntelligence(MainFSM.m.getcIntelligence() + toBeAdded.getIn());
+		MainFSM.m.setcWisdom(MainFSM.m.getcWisdom() + toBeAdded.getWi());
+		MainFSM.m.setcCommonSense(MainFSM.m.getcCommonSense() + toBeAdded.getCs());
+		MainFSM.m.setcSpirituality(MainFSM.m.getcSpirituality() + toBeAdded.getSp());
+		MainFSM.m.setcCharisma(MainFSM.m.getcCharisma() + toBeAdded.getCh());
+		MainFSM.m.setcLuck(MainFSM.m.getcLuck() + toBeAdded.getLk());
+		MainFSM.m.setcConstitution(MainFSM.m.getcConstitution() + toBeAdded.getCn());
+	}
 	/* other attributes determined */
 	private void state10() {
 		Game.state = 10;
