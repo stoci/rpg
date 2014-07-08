@@ -18,6 +18,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import character.BonusWrapper;
+import character.Const;
 import character.Model;
 
 public class CharCreationFSM
@@ -57,7 +58,7 @@ public class CharCreationFSM
 					int age = Integer.parseInt(txtField.getText());
 					if (age >= 17 && age <= 88) {
 						inputLayout.setVisible(false);
-						MainFSM.m.setAge(age);
+						MainFSM.m.modAge(age);
 						checkState(Game.state=8);
 					}
 				} else {
@@ -260,7 +261,7 @@ public class CharCreationFSM
 		}
 		
 		if ((prevNumRolls9!=numRolls9) && numRolls9 > 0) {
-			MainFSM.m.rollBaseStats(3, 3, 2);
+			rollBaseStats(3, 3, 2);
 			findBonus();
 		}
 		Game.textDescr.setText("Ah.. yer Base Stats shall be. . .");
@@ -274,6 +275,33 @@ public class CharCreationFSM
 								+ MainFSM.m.getcDexterity(), "CS " + MainFSM.m.getcCommonSense(),
 						"LK " + MainFSM.m.getcLuck(), "CN " + MainFSM.m.getcConstitution(), "AVG "+MainFSM.m.meanBaseStats());
 		Game.textDescr.appendText(output);
+	}
+	private void rollBaseStats(int numOfDice,int numOfSides, int modifier)
+	{
+		//rolls for base stats
+		MainFSM.m.modStrength(Const.rollDice(numOfDice,numOfSides,modifier));
+		MainFSM.m.modDexterity(Const.rollDice(numOfDice, numOfSides,modifier));
+		MainFSM.m.modTwitch(Const.rollDice(numOfDice, numOfSides,modifier));
+		MainFSM.m.modIntelligence(Const.rollDice(numOfDice, numOfSides,modifier));
+		MainFSM.m.modWisdom(Const.rollDice(numOfDice, numOfSides,modifier));
+		MainFSM.m.modCommonSense(Const.rollDice(numOfDice, numOfSides,modifier));
+		MainFSM.m.modSpirituality(Const.rollDice(numOfDice, numOfSides,modifier));
+		MainFSM.m.modCharisma(Const.rollDice(numOfDice, numOfSides,modifier));
+		MainFSM.m.modLuck(Const.rollDice(numOfDice, numOfSides,modifier));
+		MainFSM.m.modConstitution(Const.rollDice(numOfDice, numOfSides,modifier));
+		
+		//sets current stats to base stats
+		MainFSM.m.modcStrength(MainFSM.m.getStrength());
+		MainFSM.m.modcDexterity(MainFSM.m.getDexterity());
+		MainFSM.m.modcTwitch(MainFSM.m.getTwitch());
+		MainFSM.m.modcIntelligence(MainFSM.m.getIntelligence());
+		MainFSM.m.modcWisdom(MainFSM.m.getWisdom());
+		MainFSM.m.modcCommonSense(MainFSM.m.getCommonSense());
+		MainFSM.m.modcSpirituality(MainFSM.m.getSpirituality());
+		MainFSM.m.modcCharisma(MainFSM.m.getCharisma());
+		MainFSM.m.modcLuck(MainFSM.m.getLuck());
+		MainFSM.m.modcConstitution(MainFSM.m.getConstitution());
+		
 	}
 	// Iterates through provided bonuses to select and add to the current stat.
 	private void findBonus() {
@@ -321,19 +349,26 @@ public class CharCreationFSM
 			count++;
 		}
 	}
-
+	//adds the bonus wrapper to the current stats
 	private void addToBase(BonusWrapper toBeAdded) {
 		
-		MainFSM.m.setcStrength(MainFSM.m.getcStrength() + toBeAdded.getSt());
-		MainFSM.m.setcDexterity(MainFSM.m.getcDexterity() + toBeAdded.getDx());
-		MainFSM.m.setcTwitch(MainFSM.m.getcTwitch() + toBeAdded.getTw());
-		MainFSM.m.setcIntelligence(MainFSM.m.getcIntelligence() + toBeAdded.getIn());
-		MainFSM.m.setcWisdom(MainFSM.m.getcWisdom() + toBeAdded.getWi());
-		MainFSM.m.setcCommonSense(MainFSM.m.getcCommonSense() + toBeAdded.getCs());
-		MainFSM.m.setcSpirituality(MainFSM.m.getcSpirituality() + toBeAdded.getSp());
-		MainFSM.m.setcCharisma(MainFSM.m.getcCharisma() + toBeAdded.getCh());
-		MainFSM.m.setcLuck(MainFSM.m.getcLuck() + toBeAdded.getLk());
-		MainFSM.m.setcConstitution(MainFSM.m.getcConstitution() + toBeAdded.getCn());
+		MainFSM.m.modcStrength(toBeAdded.getSt());
+		MainFSM.m.modcDexterity(toBeAdded.getDx());
+		MainFSM.m.modcTwitch(toBeAdded.getTw());
+		MainFSM.m.modcConstitution(toBeAdded.getCn());
+		MainFSM.m.modcIntelligence(toBeAdded.getIn());
+		MainFSM.m.modcWisdom(toBeAdded.getWi());
+		MainFSM.m.modcCommonSense(toBeAdded.getCs());
+		MainFSM.m.modcSpirituality(toBeAdded.getSp());
+		MainFSM.m.modcCharisma(toBeAdded.getCh());
+		MainFSM.m.modcLuck(toBeAdded.getLk());
+		MainFSM.m.modcArmorClass(toBeAdded.getAc());
+		MainFSM.m.modcHitPoints(toBeAdded.getHit());
+		MainFSM.m.modcMagicPoints(toBeAdded.getMagicPoints());
+		MainFSM.m.modcPrayerPoints(toBeAdded.getPrayer());
+		MainFSM.m.modcSkillPoints(toBeAdded.getSkill());
+		MainFSM.m.modcBardPoints(toBeAdded.getBard());
+		MainFSM.m.modGold(toBeAdded.getGold());
 	}
 	/* other attributes determined */
 	private void state10() {
