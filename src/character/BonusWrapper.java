@@ -57,7 +57,17 @@ public class BonusWrapper
 		}
 //		System.out.println(this.gold);
 	}
-
+	
+	//overridden toString() method for debug purposes
+	@Override
+	public String toString()
+	{
+		
+		return "["+getType()+","+getName()+","+getSt()+","+getDx()+","+getTw()+","+
+				getCn()+","+getIn()+","+getWi()+","+getCs()+","+getSp()+","+getCh()
+				+","+getLk()+","+getAc()+","+getHit()+","+getMystic()+","+getPrayer()
+				+","+getSkill()+","+getBard()+","+getGold()+"]";
+	}
 	//getters & setters
 	public String getType() {
 		return type;

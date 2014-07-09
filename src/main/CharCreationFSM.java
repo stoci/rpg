@@ -267,7 +267,7 @@ public class CharCreationFSM
 						+ "%-12s%-10s%-10s\n%-12s%-10s%-10s\n%-12s%-10s\n\n(K)eep\n(R)eroll\n\n(Esc)ape",
 						numRolls9, "Physical", "Mental", "Ineffable",
 						"ST " + MainFSM.m.getStrength(), "IN " + MainFSM.m.getIntelligence(),
-						"SP " + MainFSM.m.getSpirtuality(), "TW " + MainFSM.m.getTwitch(),
+						"SP " + MainFSM.m.getSpirituality(), "TW " + MainFSM.m.getTwitch(),
 						"WI " + MainFSM.m.getWisdom(), "CH " + MainFSM.m.getCharisma(), "DX "
 								+ MainFSM.m.getDexterity(), "CS " + MainFSM.m.getCommonSense(),
 						"LK " + MainFSM.m.getLuck(), "CN " + MainFSM.m.getConstitution(), "AVG "+MainFSM.m.meanBaseStats());
@@ -555,5 +555,10 @@ public class CharCreationFSM
 		inputLayout.getChildren().addAll(inputLabel, txtField);
 		if(!Game.grid.getChildren().contains(inputLayout))Game.grid.add(inputLayout, 0, 1, 1, 1);
 		txtField.requestFocus();
+	}
+	
+	private void injectBonuses()
+	{
+		
 	}
 }

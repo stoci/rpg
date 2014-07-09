@@ -6,7 +6,7 @@ public class Model implements IActions
 	private String charClass;
 	
 	//base stats
-	private int strength,dexterity,twitch,constitution,intelligence,wisdom,commonSense,spirtuality,charisma,luck;
+	private int strength,dexterity,twitch,constitution,intelligence,wisdom,commonSense,spirituality,charisma,luck;
 	
 	//other attributes
 	private String name, race, gender, alignment, profession; 
@@ -47,7 +47,7 @@ public class Model implements IActions
 		this.intelligence = Const.rollDice(numOfDice, numOfSides,modifier);
 		this.wisdom = Const.rollDice(numOfDice, numOfSides,modifier);
 		this.commonSense = Const.rollDice(numOfDice, numOfSides,modifier);
-		this.spirtuality = Const.rollDice(numOfDice, numOfSides,modifier);
+		this.spirituality = Const.rollDice(numOfDice, numOfSides,modifier);
 		this.charisma = Const.rollDice(numOfDice, numOfSides,modifier);
 		this.luck = Const.rollDice(numOfDice, numOfSides,modifier);
 		this.constitution = Const.rollDice(numOfDice, numOfSides,modifier);
@@ -57,7 +57,7 @@ public class Model implements IActions
 	public double meanBaseStats()
 	{
 		double mean = (this.strength+this.dexterity+this.twitch+this.intelligence+this.wisdom
-				+this.commonSense+this.spirtuality+this.charisma+this.luck+this.constitution)/10.0;
+				+this.commonSense+this.spirituality+this.charisma+this.luck+this.constitution)/10.0;
 		return mean;
 	}
 
@@ -117,12 +117,12 @@ public class Model implements IActions
 		this.commonSense = commonSense;
 	}
 
-	public int getSpirtuality() {
-		return spirtuality;
+	public int getSpirituality() {
+		return spirituality;
 	}
 
-	public void setSpirtuality(int spirtuality) {
-		this.spirtuality = spirtuality;
+	public void setSpirituality(int spirtuality) {
+		this.spirituality = spirtuality;
 	}
 
 	public int getCharisma() {
