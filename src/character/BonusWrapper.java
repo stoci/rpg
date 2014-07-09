@@ -17,7 +17,7 @@ public class BonusWrapper
 	private String name;
 	
 	//bonuses
-	private int st,dx,tw,cn,in,wi,cs,sp,ch,lk,ac,hit,mystic,prayer,skill,bard,gold;
+	private int st,dx,tw,cn,in,wi,cs,sp,ch,lk,ac,hit,magicPoints,prayer,skill,bard,gold;
 	
 	public BonusWrapper()
 	{
@@ -47,7 +47,7 @@ public class BonusWrapper
 				case "lk":this.lk=Integer.parseInt(pair.getValue().toString());break;
 				case "ac":this.ac=Integer.parseInt(pair.getValue().toString());break;
 				case "hit":this.hit=Integer.parseInt(pair.getValue().toString());break;
-				case "mystic":this.mystic=Integer.parseInt(pair.getValue().toString());break;
+				case "mystic":this.magicPoints=Integer.parseInt(pair.getValue().toString());break;
 				case "prayer":this.prayer=Integer.parseInt(pair.getValue().toString());break;
 				case "skill":this.skill=Integer.parseInt(pair.getValue().toString());break;
 				case "bard":this.bard=Integer.parseInt(pair.getValue().toString());break;
@@ -65,7 +65,7 @@ public class BonusWrapper
 		
 		return "["+getType()+","+getName()+","+getSt()+","+getDx()+","+getTw()+","+
 				getCn()+","+getIn()+","+getWi()+","+getCs()+","+getSp()+","+getCh()
-				+","+getLk()+","+getAc()+","+getHit()+","+getMystic()+","+getPrayer()
+				+","+getLk()+","+getAc()+","+getHit()+","+getMagicPoints()+","+getPrayer()
 				+","+getSkill()+","+getBard()+","+getGold()+"]";
 	}
 	//getters & setters
@@ -181,12 +181,12 @@ public class BonusWrapper
 		this.hit = hit;
 	}
 
-	public int getMystic() {
-		return mystic;
+	public int getMagicPoints() {
+		return magicPoints;
 	}
 
-	public void setMystic(int mystic) {
-		this.mystic = mystic;
+	public void setMagicPoints(int mystic) {
+		this.magicPoints = mystic;
 	}
 
 	public int getPrayer() {

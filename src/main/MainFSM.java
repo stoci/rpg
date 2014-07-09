@@ -15,8 +15,7 @@ class MainFSM {
 	
 	// stores bonuses by specific type (name)
 	static ArrayList<BonusWrapper> bonuses = new ArrayList<BonusWrapper>();
-	
-	
+
 	/* welcome screen -- hard-coded */
 	public void enter() {
 		new JsonParser().parseBonusFile();
