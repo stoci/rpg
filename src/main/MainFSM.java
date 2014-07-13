@@ -1,3 +1,11 @@
+/*
+ * 
+ * The base state machine from which all others arise from.
+ * 
+ * Author: Josh Blitz
+ * 
+ */
+
 package main;
 
 import java.util.ArrayList;
@@ -18,7 +26,7 @@ class MainFSM {
 
 	/* welcome screen -- hard-coded */
 	public void enter() {
-		new JsonParser().parseBonusFile();
+		new JSONReader().readBonusFile();
 		for(BonusWrapper bw : bonuses)System.out.println(bw);
 		Game.textDescr
 				.setText("Welcome to Proving Grounds!\n(C)ontinue\n(Q)uit");

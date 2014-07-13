@@ -1,3 +1,11 @@
+/*
+ * 
+ * This class wraps JSON objects read in from bonus.json for simpler use.
+ * 
+ * Author: Josh Blitz
+ * 
+ */
+
 package character;
 
 import java.util.Iterator;
@@ -6,8 +14,6 @@ import java.util.Set;
 
 import javax.json.JsonValue;
 
-
-// class wraps JSON objects read in from data.json
 public class BonusWrapper
 {
 	// type: race/class/profession/gender/alignment
@@ -33,8 +39,8 @@ public class BonusWrapper
 			Entry<String, JsonValue> pair = i.next();
 			switch(pair.getKey().toLowerCase())
 			{
-				case "type":this.type=pair.getValue().toString();break;
-				case "name":this.name=pair.getValue().toString();break;
+				case "type":this.type=pair.getValue().toString().substring(1, pair.getValue().toString().length()-1);break;
+				case "name":this.name=pair.getValue().toString().substring(1, pair.getValue().toString().length()-1);;break;
 				case "st":this.st=Integer.parseInt(pair.getValue().toString());break;
 				case "dx":this.dx=Integer.parseInt(pair.getValue().toString());break;
 				case "tw":this.tw=Integer.parseInt(pair.getValue().toString());break;

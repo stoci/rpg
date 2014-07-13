@@ -1,15 +1,15 @@
+/*
+ * 
+ * "State machine" class containing the character creation steps.
+ * 
+ * Author: Josh Blitz
+ * 
+ */
+
 package main;
 
-import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
-
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.JsonValue;
 
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
@@ -27,10 +27,7 @@ class CharCreationFSM
 	private final int NUMROLLS=50;
 	
 	// validChoices but contains full words instead of letters
-	ArrayList<String> fullOptions = new ArrayList<String>();
-
-	// used by JSON reader methods
-	ArrayList<String> items = new ArrayList<String>();
+	static ArrayList<String> fullOptions = new ArrayList<String>();
 
 	// used for direct user input states
 	TextField txtField;
@@ -58,7 +55,7 @@ class CharCreationFSM
 					int age = Integer.parseInt(txtField.getText());
 					if (age >= 17 && age <= 88) {
 						inputLayout.setVisible(false);
-						MainFSM.m.modAge(age);
+						MainFSM.m.setAge(age);
 						checkState(Game.state=8);
 					}
 				} else {
@@ -118,7 +115,7 @@ class CharCreationFSM
 				return;
 			}
 		}
-		readJSONArray();
+		new JSONReader().readJSONArray();
 	}
 
 	/* choose gender */
@@ -138,7 +135,7 @@ class CharCreationFSM
 				return;
 			}
 		}
-		readJSONArray();
+		new JSONReader().readJSONArray();
 	}
 
 	/* choose class */
@@ -157,7 +154,7 @@ class CharCreationFSM
 				return;
 			}
 		}
-		readJSONArray();
+		new JSONReader().readJSONArray();
 
 	}
 
@@ -177,7 +174,7 @@ class CharCreationFSM
 				return;
 			}
 		}
-		readJSONObject();
+		new JSONReader().readJSONObject();
 	}
 
 	/* choose alignment */
@@ -197,7 +194,7 @@ class CharCreationFSM
 				return;
 			}
 		}
-		readJSONArray();
+		new JSONReader().readJSONArray();
 	}
 
 	/* input age */
@@ -261,8 +258,8 @@ class CharCreationFSM
 		}
 		
 		if ((prevNumRolls9!=numRolls9) && numRolls9 > 0) {
-			rollBaseStats(3, 3, 2);
-			findBonus();
+			rollBaseStats(3, 3, 2); 
+			applyBaseBonuses();
 		}
 		Game.textDescr.setText("Ah.. yer Base Stats shall be. . .");
 		String output = String
@@ -301,8 +298,8 @@ class CharCreationFSM
 		Game.textDescr.setText("..and ye shall begin with these. . .");
 		String output = String.format("\n\n# of rolls left:%3s\n\n%-15s%-3s%-15s%-3s\n%-15s%-3s\n%-15s%-3s"
 				+ "\n%-15s%-3s%-15s%-3s\n\n%22s\n\n(K)eep\n(R)eroll\n\n(Esc)ape",numRolls10,
-				"Mystic Points",99,"Hit Points",99,"Prayer Points",99,"Skill Points",99,
-				"Bard Points",99,"Gold Pieces",99,"Armor Class "+99);
+				"Mystic Points",12,"Hit Points",12,"Prayer Points",12,"Skill Points",12,
+				"Bard Points",12,"Gold Pieces",12,"Armor Class "+12);
 		Game.textDescr.appendText(output);
 	}
 	
@@ -371,171 +368,6 @@ class CharCreationFSM
 		Game.validChoices.clear();
 		fullOptions.clear();
 	}
-
-	/*
-	 * read user-moddable .json files containing only arrays depending on
-	 * current Game.state
-	 */
-	private void readJSONArray() {
-		try {
-			JsonReader reader = null;
-			items.clear();
-			/* generate GUI text choices */
-			StringBuilder output = new StringBuilder();
-			/* current game state decides which file to read in */
-			switch (Game.state) {
-			case 2:
-				output.append("Choose Race!\n\n");
-				reader = Json.createReader(new FileReader("./data/races.json"));
-				break;
-			case 3:
-				output.append("Choose Gender!\n\n");
-				reader = Json
-						.createReader(new FileReader("./data/genders.json"));
-				break;
-			case 4:
-				output.append("Choose Class!\n\n");
-				reader = Json
-						.createReader(new FileReader("./data/classes.json"));
-				break;
-			case 6:
-				output.append("Choose Alignment!\n\n");
-				reader = Json.createReader(new FileReader(
-						"./data/alignments.json"));
-				break;
-			default:
-				return;
-			}
-
-			JsonArray arr = reader.readArray();
-
-			/*
-			 * convert all JsonValues into Strings -- trim quotes and check
-			 * length isn't ridiculous
-			 */
-			for (JsonValue v : arr) {
-				String s = v.toString();
-				if (s.length() > 25)
-					throw new Exception(
-							"Value in JSON too long! Keep identifiers under 25 letters.");
-				items.add(s.substring(1, s.length() - 1));
-				fullOptions.add(s.substring(1, s.length() - 1));
-			}
-			finishJSON(output);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-		}
-	}
-
-	/* read JSON file containing object maps */
-	private void readJSONObject() {
-		try {
-			JsonReader reader = null;
-			JsonArray arr = null;
-			/* generate GUI text choices */
-			StringBuilder output = new StringBuilder();
-			items.clear();
-
-			/*
-			 * current game state decides which file to parse then read in top
-			 * level object
-			 */
-			switch (Game.state) {
-			case 5:
-				reader = Json.createReader(new FileReader(
-						"./data/professions.json"));
-				output.append("Choose Profession!\n\n");
-				arr = reader.readObject().getJsonArray("professions");
-				break;
-			default:
-				return;
-			}
-
-			// System.out.println(arr);
-			List<JsonObject> x = arr.getValuesAs(JsonObject.class); // System.out.println(x);
-
-			/* iterate through objects in profession */
-			for (JsonObject obj : x) {
-				/* object contains chosen charclass */
-				if (obj.containsKey(MainFSM.m.getCharClass())) {
-					/*
-					 * convert all JsonValues into Strings -- trim quotes and
-					 * check length isn't ridiculous
-					 */
-					for (JsonValue v : obj.getJsonArray(MainFSM.m.getCharClass())) {
-						String s = v.toString();
-						if (s.length() > 25)
-							throw new Exception(
-									"Value in JSON too long! Keep inputs under 25 letters.");
-						items.add(s.substring(1, s.length() - 1));
-						fullOptions.add(s.substring(1, s.length() - 1));
-					}
-				}
-			}
-			finishJSON(output);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-		}
-	}
-
-	private void finishJSON(StringBuilder output) throws Exception {
-		ArrayList<String> validChoices = new ArrayList<String>();
-		validChoices.add("escape");
-
-		/*
-		 * dynamic processing actions -- must set Game.validChoices and
-		 * Game.textDescr
-		 */
-		/* iterate over choice Strings */
-		for (String s : items) {
-			/*
-			 * check each letter in s against each letter in validChoice
-			 * ArrayList
-			 */
-			middle: for (int i = 0; i < s.length(); i++) {
-				/* letter to be checked against valid array */
-				String letter = String.valueOf(s.charAt(i)).toLowerCase();
-				/* check valid ArrayList for letter */
-				for (int j = 0; j < validChoices.size(); j++)
-					/* match found -- try next letter */
-					if (letter.equals(validChoices.get(j))) {
-						continue middle;
-					}
-				/*
-				 * no match found returns control to middle loop -- add to valid
-				 * choices array
-				 */
-				validChoices.add(letter);
-				break middle;
-			}
-		}
-		/* remove "escape" for now */
-		validChoices.remove(0);
-
-		for (int i = 0; i < items.size(); i++) {
-			/* retrieve first choice FULL word */
-			StringBuilder sb = new StringBuilder(items.get(i).toLowerCase());
-			/* get index of letter that needs to be wrapped */
-			int index = sb.indexOf(validChoices.get(i));
-			// System.out.println(index);
-			/* reset first letter to uppercase by subtracting 32 */
-			sb.setCharAt(0, (char) (sb.charAt(0) - 32));
-			String mod = sb.insert(index, "(").insert(index + 2, ")")
-					.toString();
-			output.append(mod + "\n");
-		}
-		output.append("\n(Esc)ape");
-
-		/* dump all dynamically generated choices to GUI --add "escape" */
-		validChoices.add("escape");
-		Game.validChoices = validChoices;
-		Game.textDescr.setText(output.toString());
-		// for(String s :
-		// Game.validChoices)System.out.print(s);System.out.println();
-
-	}
 	
 	// used for managing textfield/label pair in age/name
 	private void initLayout()
@@ -558,101 +390,75 @@ class CharCreationFSM
 		if(!Game.grid.getChildren().contains(inputLayout))Game.grid.add(inputLayout, 0, 1, 1, 1);
 		txtField.requestFocus();
 	}
-
+	
+	// determines base stats
 	private void rollBaseStats(int numOfDice,int numOfSides, int modifier)
 	{
 		//rolls for base stats
-		MainFSM.m.modStrength(Const.rollDice(numOfDice,numOfSides,modifier));
-		MainFSM.m.modDexterity(Const.rollDice(numOfDice, numOfSides,modifier));
-		MainFSM.m.modTwitch(Const.rollDice(numOfDice, numOfSides,modifier));
-		MainFSM.m.modIntelligence(Const.rollDice(numOfDice, numOfSides,modifier));
-		MainFSM.m.modWisdom(Const.rollDice(numOfDice, numOfSides,modifier));
-		MainFSM.m.modCommonSense(Const.rollDice(numOfDice, numOfSides,modifier));
-		MainFSM.m.modSpirituality(Const.rollDice(numOfDice, numOfSides,modifier));
-		MainFSM.m.modCharisma(Const.rollDice(numOfDice, numOfSides,modifier));
-		MainFSM.m.modLuck(Const.rollDice(numOfDice, numOfSides,modifier));
-		MainFSM.m.modConstitution(Const.rollDice(numOfDice, numOfSides,modifier));
+		MainFSM.m.setStrength(Const.rollDice(numOfDice,numOfSides,modifier));
+		System.out.println("roll base stats  "+MainFSM.m.getStrength());
+		MainFSM.m.setDexterity(Const.rollDice(numOfDice, numOfSides,modifier));
+		MainFSM.m.setTwitch(Const.rollDice(numOfDice, numOfSides,modifier));
+		MainFSM.m.setIntelligence(Const.rollDice(numOfDice, numOfSides,modifier));
+		MainFSM.m.setWisdom(Const.rollDice(numOfDice, numOfSides,modifier));
+		MainFSM.m.setCommonSense(Const.rollDice(numOfDice, numOfSides,modifier));
+		MainFSM.m.setSpirituality(Const.rollDice(numOfDice, numOfSides,modifier));
+		MainFSM.m.setCharisma(Const.rollDice(numOfDice, numOfSides,modifier));
+		MainFSM.m.setLuck(Const.rollDice(numOfDice, numOfSides,modifier));
+		MainFSM.m.setConstitution(Const.rollDice(numOfDice, numOfSides,modifier));
 		
 		//sets current stats to base stats
-		MainFSM.m.modcStrength(MainFSM.m.getStrength());
-		MainFSM.m.modcDexterity(MainFSM.m.getDexterity());
-		MainFSM.m.modcTwitch(MainFSM.m.getTwitch());
-		MainFSM.m.modcIntelligence(MainFSM.m.getIntelligence());
-		MainFSM.m.modcWisdom(MainFSM.m.getWisdom());
-		MainFSM.m.modcCommonSense(MainFSM.m.getCommonSense());
-		MainFSM.m.modcSpirituality(MainFSM.m.getSpirituality());
-		MainFSM.m.modcCharisma(MainFSM.m.getCharisma());
-		MainFSM.m.modcLuck(MainFSM.m.getLuck());
-		MainFSM.m.modcConstitution(MainFSM.m.getConstitution());
+		MainFSM.m.setcStrength(MainFSM.m.getStrength());
+		MainFSM.m.setcDexterity(MainFSM.m.getDexterity());
+		MainFSM.m.setcTwitch(MainFSM.m.getTwitch());
+		MainFSM.m.setcIntelligence(MainFSM.m.getIntelligence());
+		MainFSM.m.setcWisdom(MainFSM.m.getWisdom());
+		MainFSM.m.setcCommonSense(MainFSM.m.getCommonSense());
+		MainFSM.m.setcSpirituality(MainFSM.m.getSpirituality());
+		MainFSM.m.setcCharisma(MainFSM.m.getCharisma());
+		MainFSM.m.setcLuck(MainFSM.m.getLuck());
+		MainFSM.m.setcConstitution(MainFSM.m.getConstitution());
 		
 	}
-
-	// Iterates through provided bonuses to select and add to the current stat.
-	private void findBonus() {
-		ArrayList<BonusWrapper> bonuses = MainFSM.bonuses;
-		int count = 0; 
-		while(bonuses.get(count).getType().contains("Race")) {
-			if(bonuses.get(count).getName().contains(MainFSM.m.getRace())) {
-				addToBase(bonuses.get(count));
-			}
-			count++;
-		}
-		while(bonuses.get(count).getType().contains("Gender")) {
-			if(bonuses.get(count).getName().contains(MainFSM.m.getGender())) {
-				addToBase(bonuses.get(count));
-			}
-			count++;
-		}
-		while(bonuses.get(count).getType().contains("Profession")) {
-			if(bonuses.get(count).getName().contains(MainFSM.m.getProfession())) {
-				addToBase(bonuses.get(count));
-			}
-			count++;
-		}
-		while(bonuses.get(count).getType().contains("Alignment")) {
-			if(bonuses.get(count).getName().contains(MainFSM.m.getAlignment())) {
-				addToBase(bonuses.get(count));
-			}
-			count++;
-		}
-		while(bonuses.get(count).getType().contains("Age")) {
-			if(count == bonuses.size() - 1) {
-				addToBase(bonuses.get(count));
-				break;
-			}
-			String trim = bonuses.get(count).getName();
-			String trim2 = bonuses.get(count + 1).getName();
-			trim = trim.substring(1, trim.length() - 1);
-			trim2 = trim2.substring(1, trim2.length() - 1);
-			int lowerAge = Integer.parseInt(trim);
-			int upperAge = Integer.parseInt(trim2);
-			if(MainFSM.m.getAge() >= lowerAge && MainFSM.m.getAge() < upperAge) {
-				addToBase(bonuses.get(count));
-				break;
-			}
-			count++;
-		}
-	}
-
-	//adds the bonus wrapper to the current stats
-	private void addToBase(BonusWrapper toBeAdded) {
+	
+	// adds bonuses (bonus.json) to ten base stats
+	private void applyBaseBonuses()
+	{		
+		ArrayList<BonusWrapper> bonuses = MainFSM.bonuses; 
+		String race = MainFSM.m.getRace();
+		String gender = MainFSM.m.getGender();
+		String profession = MainFSM.m.getProfession();
+		String alignment = MainFSM.m.getAlignment();
+		int age = MainFSM.m.getAge();
+		Model m = MainFSM.m;
 		
-		MainFSM.m.modcStrength(toBeAdded.getSt());
-		MainFSM.m.modcDexterity(toBeAdded.getDx());
-		MainFSM.m.modcTwitch(toBeAdded.getTw());
-		MainFSM.m.modcConstitution(toBeAdded.getCn());
-		MainFSM.m.modcIntelligence(toBeAdded.getIn());
-		MainFSM.m.modcWisdom(toBeAdded.getWi());
-		MainFSM.m.modcCommonSense(toBeAdded.getCs());
-		MainFSM.m.modcSpirituality(toBeAdded.getSp());
-		MainFSM.m.modcCharisma(toBeAdded.getCh());
-		MainFSM.m.modcLuck(toBeAdded.getLk());
-		MainFSM.m.modcArmorClass(toBeAdded.getAc());
-		MainFSM.m.modcHitPoints(toBeAdded.getHit());
-		MainFSM.m.modcMagicPoints(toBeAdded.getMagicPoints());
-		MainFSM.m.modcPrayerPoints(toBeAdded.getPrayer());
-		MainFSM.m.modcSkillPoints(toBeAdded.getSkill());
-		MainFSM.m.modcBardPoints(toBeAdded.getBard());
-		MainFSM.m.modGold(toBeAdded.getGold());
+		//set age for bonus application
+		if(age<=24)age=24;
+		else if(age<=35)age=35;
+		else if(age<=49)age=49;
+		else if(age<=69)age=69;
+		else if(age<=88)age=88;
+		
+		// iterate through list of wrappers
+		for(BonusWrapper bw : bonuses)
+		{
+			// get "name" of wrapper
+			String name=bw.getName();
+			// String version of age for easy comparison
+			String ageStr = String.valueOf(age);
+			
+			// if any wrapper's name matches a user choice, then apply that wrapper's bonuses
+			if(name.equals(race)||name.equals(gender)||name.equals(profession)||name.equals(alignment)||name.equals(ageStr))
+			{
+				// set bonuses using cXXXX. don't modify base 
+				m.setcStrength(m.getcStrength()+bw.getSt());m.setcDexterity(m.getcDexterity()+bw.getDx());
+				m.setcTwitch(m.getcTwitch()+bw.getTw());m.setcIntelligence(m.getcIntelligence()+bw.getIn());
+				m.setcWisdom(m.getcWisdom()+bw.getWi());m.setcCommonSense(m.getcCommonSense()+bw.getCs());
+				m.setcSpirituality(m.getcSpirituality()+bw.getSp());m.setcCharisma(m.getcCharisma()+bw.getCh());
+				m.setcLuck(m.getcLuck()+bw.getLk());m.setcConstitution(m.getcConstitution()+bw.getCn());
+			}
+		}
+
 	}
+
 }

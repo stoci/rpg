@@ -1,3 +1,12 @@
+/*
+ * 
+ * The entry class of the application containing main. The JavaFX 
+ * GUI is initialized here and the state machine is created and entered.
+ * 
+ * Author: Josh Blitz
+ * 
+ */
+
 package main;
 	
 import java.util.ArrayList;
