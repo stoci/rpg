@@ -27,7 +27,7 @@ class MainFSM {
 	/* welcome screen -- hard-coded */
 	public void enter() {
 		new JSONReader().readBonusFile();
-		for(BonusWrapper bw : bonuses)System.out.println(bw);
+//		for(BonusWrapper bw : bonuses)System.out.println(bw);
 		Game.textDescr
 				.setText("Welcome to Proving Grounds!\n(C)ontinue\n(Q)uit");
 		Game.validChoices.add("c");

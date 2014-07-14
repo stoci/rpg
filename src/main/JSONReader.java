@@ -8,9 +8,12 @@
 
 package main;
 
+import java.io.File;
 import java.io.FileReader;
 import java.util.*;
+
 import javax.json.*;
+
 import character.BonusWrapper;
 
 class JSONReader
@@ -22,7 +25,7 @@ class JSONReader
 	{
 		MainFSM.bonuses.clear();
 		try {
-			JsonReader reader = Json.createReader(new FileReader("./data/bonus.json"));;
+			JsonReader reader = Json.createReader(new FileReader("."+File.separator+"data"+File.separator+"bonus.json"));
 			JsonArray arr = reader.readArray();
 
 //			System.out.println(arr);
