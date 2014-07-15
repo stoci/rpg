@@ -10,6 +10,9 @@ package character;
 
 public class Model implements IActions
 {
+	//constants
+	private static final int SECONDARY_BASE = 3 + Const.rollDice(3, 2, -1);
+	
 	//class
 	private String charClass;
 	
@@ -24,8 +27,8 @@ public class Model implements IActions
 	private int age, status, level, xp, rank, gold;
 	
 	//points c=current m=max
-	private int cHitPoints, mHitPoints, cMagicPoints, mMagicPoints, 
-	cSkillPoints, mSkillPoints, cPrayerPoints, mPrayerPoints, cBardPoints, mBardPoints;
+	private int cHit, mHit, cMystic, mMystic, 
+	cSkill, mSkill, cPrayer, mPrayer, cBard, mBard;
 	
 	//armor class b=base, c=current
 	private int bArmorClass, cArmorClass;
@@ -35,7 +38,7 @@ public class Model implements IActions
 	
 	//resurrection modifier
 	private double resModifier;
-
+	
 	@Override
 	public void useWeapon() {
 		// TODO Auto-generated method stub
@@ -55,380 +58,381 @@ public class Model implements IActions
 				+this.commonSense+this.spirituality+this.charisma+this.luck+this.constitution)/10.0;
 		return mean;
 	}
-	// returns base Strength
-	public int getStrength() {
-		return strength;
-	}
-	//returns base Dexterity
-	public int getDexterity() {
-		return dexterity;
-	}
-	//returns base Twitch
-	public int getTwitch() {
-		return twitch;
-	}
-	//returns base Constitution
-	public int getConstitution() {
-		return constitution;
-	}
-	//returns base Intelligence
-	public int getIntelligence() {
-		return intelligence;
-	}
-	//returns base Wisdom
-	public int getWisdom() {
-		return wisdom;
-	}
-	//returns base CommonSense
-	public int getCommonSense() {
-		return commonSense;
-	}
-	//returns base Spirituality
-	public int getSpirituality() {
-		return spirituality;
-	}
-	//returns base Charisma
-	public int getCharisma() {
-		return charisma;
-	}
-	//returns base Luck
-	public int getLuck() {
-		return luck;
-	}
-	//returns the name
-	public String getName() {
-		return name;
-	}
-	//sets the name
-	public void setName(String name) {
-		this.name = name;
-	}
-	//returns the age
-	public int getAge() {
-		return age;
-	}
-	//returns the race
-	public String getRace() {
-		return race;
-	}
-	//sets the race
-	public void setRace(String race) {
-		this.race = race;
-	}
-	//returns the status
-	public int getStatus() {
-		return status;
-	}
-	//sets the status
-	public void setStatus(int status) {
-		this.status = status;
-	}
-	//returns the character level
-	public int getLevel() {
-		return level;
-	}
-	// returns the XP
-	public int getXp() {
-		return xp;
-	}
-	//returns Gender
-	public String getGender() {
-		return gender;
-	}
-	//sets Gender
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
-	//returns Alignment
-	public String getAlignment() {
-		return alignment;
-	}
-	//sets Alignment
-	public void setAlignment(String alignment) {
-		this.alignment = alignment;
-	}
-	//returns Profession
-	public String getProfession() {
-		return profession;
-	}
-	//sets Profession
-	public void setProfession(String profession) {
-		this.profession = profession;
-	}
-	//returns Rank
-	public int getRank() {
-		return rank;
-	}
-	//returns gold
-	public int getGold() {
-		return gold;
-	}
-	//returns current Hit Points
-	public int getcHitPoints() {
-		return cHitPoints;
-	}
-	//return max Hit Points
-	public int getmHitPoints() {
-		return mHitPoints;
-	}
-	//returns current Magic Points
-	public int getcMagicPoints() {
-		return cMagicPoints;
-	}
-	//returns max Magic Points
-	public int getmMagicPoints() {
-		return mMagicPoints;
-	}
-	//returns current Skill Points
-	public int getcSkillPoints() {
-		return cSkillPoints;
-	}
-	//return max Skill Points 
-	public int getmSkillPoints() {
-		return mSkillPoints;
-	}
-	//returns current Prayer Points
-	public int getcPrayerPoints() {
-		return cPrayerPoints;
-	}
-	//returns max Prayer Points
-	public int getmPrayerPoints() {
-		return mPrayerPoints;
-	}
-	//returns current Bard Points 
-	public int getcBardPoints() {
-		return cBardPoints;
-	}
-	//returns max Bard Points
-	public int getmBardPoints() {
-		return mBardPoints;
-	}
-	//returns base Armor Class
-	public int getbArmorClass() {
-		return bArmorClass;
-	}
-	//returns current Armor Class
-	public int getcArmorClass() {
-		return cArmorClass;
-	}
-	//returns base Attacks Per Round
-	public int getbAttPerRound() {
-		return bAttPerRound;
-	}
-	//returns current Attacks Per Round
-	public int getcAttPerRound() {
-		return cAttPerRound;
-	}
-	//returns resModifier
-	public double getResModifier() {
-		return resModifier;
-	}
-	//returns the Character Class
+
 	public String getCharClass() {
 		return charClass;
 	}
-	//sets the Character Class
+
 	public void setCharClass(String charClass) {
 		this.charClass = charClass;
 	}
-	//returns current Strength
-	public int getcStrength() {
-		return cStrength;
-	}
-	//returns current Dexterity
-	public int getcDexterity() {
-		return cDexterity;
-	}
-	//returns current Twitch
-	public int getcTwitch() {
-		return cTwitch;
-	}
-	//returns the current Constitution
-	public int getcConstitution() {
-		return cConstitution;
-	}
-	//returns current Intelligence
-	public int getcIntelligence() {
-		return cIntelligence;
-	}
-	//returns current Wisdom
-	public int getcWisdom() {
-		return cWisdom;
-	}
-	//returns current CommonSense
-	public int getcCommonSense() {
-		return cCommonSense;
-	}
-	//returns current Spirituality
-	public int getcSpirituality() {
-		return cSpirituality;
-	}
-	//returns current Charisma
-	public int getcCharisma() {
-		return cCharisma;
-	}
-	//returns current Luck
-	public int getcLuck() {
-		return cLuck;
+
+	public int getStrength() {
+		return strength;
 	}
 
 	public void setStrength(int strength) {
 		this.strength = strength;
 	}
 
+	public int getDexterity() {
+		return dexterity;
+	}
+
 	public void setDexterity(int dexterity) {
 		this.dexterity = dexterity;
+	}
+
+	public int getTwitch() {
+		return twitch;
 	}
 
 	public void setTwitch(int twitch) {
 		this.twitch = twitch;
 	}
 
+	public int getConstitution() {
+		return constitution;
+	}
+
 	public void setConstitution(int constitution) {
 		this.constitution = constitution;
+	}
+
+	public int getIntelligence() {
+		return intelligence;
 	}
 
 	public void setIntelligence(int intelligence) {
 		this.intelligence = intelligence;
 	}
 
+	public int getWisdom() {
+		return wisdom;
+	}
+
 	public void setWisdom(int wisdom) {
 		this.wisdom = wisdom;
+	}
+
+	public int getCommonSense() {
+		return commonSense;
 	}
 
 	public void setCommonSense(int commonSense) {
 		this.commonSense = commonSense;
 	}
 
+	public int getSpirituality() {
+		return spirituality;
+	}
+
 	public void setSpirituality(int spirituality) {
 		this.spirituality = spirituality;
+	}
+
+	public int getCharisma() {
+		return charisma;
 	}
 
 	public void setCharisma(int charisma) {
 		this.charisma = charisma;
 	}
 
+	public int getLuck() {
+		return luck;
+	}
+
 	public void setLuck(int luck) {
 		this.luck = luck;
+	}
+
+	public int getcStrength() {
+		return cStrength;
 	}
 
 	public void setcStrength(int cStrength) {
 		this.cStrength = cStrength;
 	}
 
+	public int getcDexterity() {
+		return cDexterity;
+	}
+
 	public void setcDexterity(int cDexterity) {
 		this.cDexterity = cDexterity;
+	}
+
+	public int getcTwitch() {
+		return cTwitch;
 	}
 
 	public void setcTwitch(int cTwitch) {
 		this.cTwitch = cTwitch;
 	}
 
+	public int getcConstitution() {
+		return cConstitution;
+	}
+
 	public void setcConstitution(int cConstitution) {
 		this.cConstitution = cConstitution;
+	}
+
+	public int getcIntelligence() {
+		return cIntelligence;
 	}
 
 	public void setcIntelligence(int cIntelligence) {
 		this.cIntelligence = cIntelligence;
 	}
 
+	public int getcWisdom() {
+		return cWisdom;
+	}
+
 	public void setcWisdom(int cWisdom) {
 		this.cWisdom = cWisdom;
+	}
+
+	public int getcCommonSense() {
+		return cCommonSense;
 	}
 
 	public void setcCommonSense(int cCommonSense) {
 		this.cCommonSense = cCommonSense;
 	}
 
+	public int getcSpirituality() {
+		return cSpirituality;
+	}
+
 	public void setcSpirituality(int cSpirituality) {
 		this.cSpirituality = cSpirituality;
+	}
+
+	public int getcCharisma() {
+		return cCharisma;
 	}
 
 	public void setcCharisma(int cCharisma) {
 		this.cCharisma = cCharisma;
 	}
 
+	public int getcLuck() {
+		return cLuck;
+	}
+
 	public void setcLuck(int cLuck) {
 		this.cLuck = cLuck;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getRace() {
+		return race;
+	}
+
+	public void setRace(String race) {
+		this.race = race;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public String getAlignment() {
+		return alignment;
+	}
+
+	public void setAlignment(String alignment) {
+		this.alignment = alignment;
+	}
+
+	public String getProfession() {
+		return profession;
+	}
+
+	public void setProfession(String profession) {
+		this.profession = profession;
+	}
+
+	public int getAge() {
+		return age;
 	}
 
 	public void setAge(int age) {
 		this.age = age;
 	}
 
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
 	public void setLevel(int level) {
 		this.level = level;
+	}
+
+	public int getXp() {
+		return xp;
 	}
 
 	public void setXp(int xp) {
 		this.xp = xp;
 	}
 
+	public int getRank() {
+		return rank;
+	}
+
 	public void setRank(int rank) {
 		this.rank = rank;
+	}
+
+	public int getGold() {
+		return gold;
 	}
 
 	public void setGold(int gold) {
 		this.gold = gold;
 	}
 
-	public void setcHitPoints(int cHitPoints) {
-		this.cHitPoints = cHitPoints;
+	public int getcHit() {
+		return cHit;
 	}
 
-	public void setmHitPoints(int mHitPoints) {
-		this.mHitPoints = mHitPoints;
+	public void setcHit(int cHit) {
+		this.cHit = cHit;
 	}
 
-	public void setcMagicPoints(int cMagicPoints) {
-		this.cMagicPoints = cMagicPoints;
+	public int getmHit() {
+		return mHit;
 	}
 
-	public void setmMagicPoints(int mMagicPoints) {
-		this.mMagicPoints = mMagicPoints;
+	public void setmHit(int mHit) {
+		this.mHit = mHit;
 	}
 
-	public void setcSkillPoints(int cSkillPoints) {
-		this.cSkillPoints = cSkillPoints;
+	public int getcMystic() {
+		return cMystic;
 	}
 
-	public void setmSkillPoints(int mSkillPoints) {
-		this.mSkillPoints = mSkillPoints;
+	public void setcMystic(int cMystic) {
+		this.cMystic = cMystic;
 	}
 
-	public void setcPrayerPoints(int cPrayerPoints) {
-		this.cPrayerPoints = cPrayerPoints;
+	public int getmMystic() {
+		return mMystic;
 	}
 
-	public void setmPrayerPoints(int mPrayerPoints) {
-		this.mPrayerPoints = mPrayerPoints;
+	public void setmMystic(int mMystic) {
+		this.mMystic = mMystic;
 	}
 
-	public void setcBardPoints(int cBardPoints) {
-		this.cBardPoints = cBardPoints;
+	public int getcSkill() {
+		return cSkill;
 	}
 
-	public void setmBardPoints(int mBardPoints) {
-		this.mBardPoints = mBardPoints;
+	public void setcSkill(int cSkill) {
+		this.cSkill = cSkill;
+	}
+
+	public int getmSkill() {
+		return mSkill;
+	}
+
+	public void setmSkill(int mSkill) {
+		this.mSkill = mSkill;
+	}
+
+	public int getcPrayer() {
+		return cPrayer;
+	}
+
+	public void setcPrayer(int cPrayer) {
+		this.cPrayer = cPrayer;
+	}
+
+	public int getmPrayer() {
+		return mPrayer;
+	}
+
+	public void setmPrayer(int mPrayer) {
+		this.mPrayer = mPrayer;
+	}
+
+	public int getcBard() {
+		return cBard;
+	}
+
+	public void setcBard(int cBard) {
+		this.cBard = cBard;
+	}
+
+	public int getmBard() {
+		return mBard;
+	}
+
+	public void setmBard(int mBard) {
+		this.mBard = mBard;
+	}
+
+	public int getbArmorClass() {
+		return bArmorClass;
 	}
 
 	public void setbArmorClass(int bArmorClass) {
 		this.bArmorClass = bArmorClass;
 	}
 
+	public int getcArmorClass() {
+		return cArmorClass;
+	}
+
 	public void setcArmorClass(int cArmorClass) {
 		this.cArmorClass = cArmorClass;
+	}
+
+	public int getbAttPerRound() {
+		return bAttPerRound;
 	}
 
 	public void setbAttPerRound(int bAttPerRound) {
 		this.bAttPerRound = bAttPerRound;
 	}
 
+	public int getcAttPerRound() {
+		return cAttPerRound;
+	}
+
 	public void setcAttPerRound(int cAttPerRound) {
 		this.cAttPerRound = cAttPerRound;
+	}
+
+	public double getResModifier() {
+		return resModifier;
 	}
 
 	public void setResModifier(double resModifier) {
 		this.resModifier = resModifier;
 	}
+
 }

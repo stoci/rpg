@@ -25,6 +25,7 @@ class CharCreationFSM
 {
 	//constants
 	private final int NUMROLLS=50;
+	private final int SEC_BASE = 3;
 	
 	// validChoices but contains full words instead of letters
 	static ArrayList<String> fullOptions = new ArrayList<String>();
@@ -273,7 +274,7 @@ class CharCreationFSM
 						"LK " + MainFSM.m.getcLuck(), "CN " + MainFSM.m.getcConstitution(), "AVG "+MainFSM.m.meanBaseStats());
 		Game.textDescr.appendText(output);
 	}
-	/* other attributes determined */
+	// secondary stats determined
 	private void state10() {
 		Game.state = 10;
 		Game.validChoices.add("k");
@@ -296,10 +297,13 @@ class CharCreationFSM
 			break;
 		}
 		Game.textDescr.setText("..and ye shall begin with these. . .");
+		rollSecondaryStats(3, 3, 2, -1);
+		applySecondaryBonuses();
+		Model m = MainFSM.m;
 		String output = String.format("\n\n# of rolls left:%3s\n\n%-15s%-3s%-15s%-3s\n%-15s%-3s\n%-15s%-3s"
 				+ "\n%-15s%-3s%-15s%-3s\n\n%22s\n\n(K)eep\n(R)eroll\n\n(Esc)ape",numRolls10,
-				"Mystic Points",12,"Hit Points",12,"Prayer Points",12,"Skill Points",12,
-				"Bard Points",12,"Gold Pieces",12,"Armor Class "+12);
+				"Mystic Points",m.getmMystic(),"Hit Points",m.getmHit(),"Prayer Points",m.getmPrayer(),"Skill Points",m.getmSkill(),
+				"Bard Points",m.getmBard(),"Gold Pieces",m.getGold(),"Armor Class "+m.getbArmorClass());
 		Game.textDescr.appendText(output);
 	}
 	
@@ -396,7 +400,7 @@ class CharCreationFSM
 	{
 		//rolls for base stats
 		MainFSM.m.setStrength(Const.rollDice(numOfDice,numOfSides,modifier));
-		System.out.println("roll base stats  "+MainFSM.m.getStrength());
+//		System.out.println("roll base stats  "+MainFSM.m.getStrength());
 		MainFSM.m.setDexterity(Const.rollDice(numOfDice, numOfSides,modifier));
 		MainFSM.m.setTwitch(Const.rollDice(numOfDice, numOfSides,modifier));
 		MainFSM.m.setIntelligence(Const.rollDice(numOfDice, numOfSides,modifier));
@@ -419,6 +423,27 @@ class CharCreationFSM
 		MainFSM.m.setcLuck(MainFSM.m.getLuck());
 		MainFSM.m.setcConstitution(MainFSM.m.getConstitution());
 		
+	}
+	
+	// determines base secondary stats
+	private void rollSecondaryStats(int base, int numOfDice, int numOfSides, int modifier)
+	{
+		Model m = MainFSM.m;
+		
+		m.setcArmorClass(SEC_BASE+Const.rollDice(numOfDice, numOfSides, modifier));
+		m.setmHit(SEC_BASE+Const.rollDice(numOfDice, numOfSides, modifier));
+		m.setmPrayer(SEC_BASE+Const.rollDice(numOfDice, numOfSides, modifier));
+		m.setmSkill(SEC_BASE+Const.rollDice(numOfDice, numOfSides, modifier));
+		m.setmBard(SEC_BASE+Const.rollDice(numOfDice, numOfSides, modifier));
+		m.setmMystic(SEC_BASE+Const.rollDice(numOfDice, numOfSides, modifier));
+		m.setGold(SEC_BASE+Const.rollDice(numOfDice, numOfSides, modifier));
+		
+		m.setbArmorClass(m.getcArmorClass());
+		m.setcHit(m.getmHit());
+		m.setcPrayer(m.getmPrayer());
+		m.setcSkill(m.getmSkill());
+		m.setcBard(m.getmBard());
+		m.setcMystic(m.getmMystic());
 	}
 	
 	// adds bonuses (bonus.json) to ten base stats
@@ -456,6 +481,45 @@ class CharCreationFSM
 				m.setcWisdom(m.getcWisdom()+bw.getWi());m.setcCommonSense(m.getcCommonSense()+bw.getCs());
 				m.setcSpirituality(m.getcSpirituality()+bw.getSp());m.setcCharisma(m.getcCharisma()+bw.getCh());
 				m.setcLuck(m.getcLuck()+bw.getLk());m.setcConstitution(m.getcConstitution()+bw.getCn());
+			}
+		}
+
+	}
+	
+	// adds bonuses (bonus.json) to seven secondary stats -- AC,Hit,Mystic,Prayer,SKill,Bard,Gold
+	private void applySecondaryBonuses()
+	{		
+		ArrayList<BonusWrapper> bonuses = MainFSM.bonuses; 
+		String race = MainFSM.m.getRace();
+		String gender = MainFSM.m.getGender();
+		String profession = MainFSM.m.getProfession();
+		String alignment = MainFSM.m.getAlignment();
+		int age = MainFSM.m.getAge();
+		Model m = MainFSM.m;
+		
+		//set age for bonus application
+		if(age<=24)age=24;
+		else if(age<=35)age=35;
+		else if(age<=49)age=49;
+		else if(age<=69)age=69;
+		else if(age<=88)age=88;
+		
+		// iterate through list of wrappers
+		for(BonusWrapper bw : bonuses)
+		{
+			// get "name" of wrapper
+			String name=bw.getName();
+			// String version of age for easy comparison
+			String ageStr = String.valueOf(age);
+			
+			// if any wrapper's name matches a user choice, then apply that wrapper's bonuses
+			if(name.equals(race)||name.equals(gender)||name.equals(profession)||name.equals(alignment)||name.equals(ageStr))
+			{
+				// set bonuses using mXXXX, current will equal base for now
+				m.setcArmorClass(m.getcArmorClass()+bw.getAc());m.setmHit(m.getmHit()+bw.getHit());
+				m.setmMystic(m.getmMystic()+bw.getMystic());m.setmPrayer(m.getmPrayer()+bw.getPrayer());
+				m.setmSkill(m.getmSkill()+bw.getSkill());m.setmBard(m.getmBard()+bw.getBard());
+				m.setGold(m.getGold()+bw.getGold());
 			}
 		}
 
