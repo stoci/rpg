@@ -9,7 +9,6 @@
 package main;
 
 import java.io.File;
-import java.io.FileReader;
 import java.util.*;
 
 import javax.json.*;
@@ -21,11 +20,19 @@ class JSONReader
 	// used by JSON reader methods
 	ArrayList<String> items = new ArrayList<String>();
 	
+	// file paths
+	private String bonus = "resources/data/bonus.json";
+	private String races = "resources/data/races.json";
+	private String genders = "resources/data/genders.json";
+	private String alignments = "resources/data/alignments.json";
+	private String classes = "resources/data/classes.json";
+	private String professions = "resources/data/professions.json";
+	
 	public void readBonusFile()
 	{
 		MainFSM.bonuses.clear();
 		try {
-			JsonReader reader = Json.createReader(new FileReader("."+File.separator+"data"+File.separator+"bonus.json"));
+			JsonReader reader = Json.createReader(getClass().getClassLoader().getResourceAsStream(bonus));
 			JsonArray arr = reader.readArray();
 
 //			System.out.println(arr);
@@ -55,22 +62,21 @@ class JSONReader
 			switch (Game.state) {
 			case 2:
 				output.append("Choose Race!\n\n");
-				reader = Json.createReader(new FileReader("./data/races.json"));
+				reader = Json.createReader(getClass().getClassLoader().getResourceAsStream(races));
 				break;
 			case 3:
 				output.append("Choose Gender!\n\n");
 				reader = Json
-						.createReader(new FileReader("./data/genders.json"));
+						.createReader(getClass().getClassLoader().getResourceAsStream(genders));
 				break;
 			case 4:
 				output.append("Choose Class!\n\n");
 				reader = Json
-						.createReader(new FileReader("./data/classes.json"));
+						.createReader(getClass().getClassLoader().getResourceAsStream(classes));
 				break;
 			case 6:
 				output.append("Choose Alignment!\n\n");
-				reader = Json.createReader(new FileReader(
-						"./data/alignments.json"));
+				reader = Json.createReader(getClass().getClassLoader().getResourceAsStream(alignments));
 				break;
 			default:
 				return;
@@ -112,8 +118,7 @@ class JSONReader
 			 */
 			switch (Game.state) {
 			case 5:
-				reader = Json.createReader(new FileReader(
-						"./data/professions.json"));
+				reader = Json.createReader(getClass().getClassLoader().getResourceAsStream(professions));
 				output.append("Choose Profession!\n\n");
 				arr = reader.readObject().getJsonArray("professions");
 				break;
