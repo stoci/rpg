@@ -430,15 +430,17 @@ class CharCreationFSM
 	{
 		Model m = MainFSM.m;
 		
-		m.setcArmorClass(SEC_BASE+Const.rollDice(numOfDice, numOfSides, modifier));
+//		m.setcArmorClass(SEC_BASE+Const.rollDice(numOfDice, numOfSides, modifier));
 		m.setmHit(SEC_BASE+Const.rollDice(numOfDice, numOfSides, modifier));
 		m.setmPrayer(SEC_BASE+Const.rollDice(numOfDice, numOfSides, modifier));
 		m.setmSkill(SEC_BASE+Const.rollDice(numOfDice, numOfSides, modifier));
 		m.setmBard(SEC_BASE+Const.rollDice(numOfDice, numOfSides, modifier));
 		m.setmMystic(SEC_BASE+Const.rollDice(numOfDice, numOfSides, modifier));
-		m.setGold(SEC_BASE+Const.rollDice(numOfDice, numOfSides, modifier));
+		// gold handled differently
+		m.setGold(Const.rollDice(2,3));
 		
-		m.setbArmorClass(m.getcArmorClass());
+		// set current to maximum for now
+//		m.setbArmorClass(m.getcArmorClass());
 		m.setcHit(m.getmHit());
 		m.setcPrayer(m.getmPrayer());
 		m.setcSkill(m.getmSkill());
@@ -522,6 +524,10 @@ class CharCreationFSM
 				m.setGold(m.getGold()+bw.getGold());
 			}
 		}
+		
+		// modify gold according to table in step #12
+		int gold = m.getGold();
+		
 
 	}
 

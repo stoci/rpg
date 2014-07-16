@@ -121,7 +121,7 @@ public class Game extends Application
 	{
 		/*IMAGE DISPLAY AREA*/
 		img = new ImageView();
-		img.setImage(new Image("http://www.tentonhammer.com/image/view/248528"));
+		img.setImage(new Image("resources/images/test.jpg"));
 		img.setFitHeight(750); img.setFitWidth(550); img.setPreserveRatio(true);
 		grid.add(img,1,1,1,1);
 	}

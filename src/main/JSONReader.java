@@ -8,11 +8,8 @@
 
 package main;
 
-import java.io.File;
 import java.util.*;
-
 import javax.json.*;
-
 import character.BonusWrapper;
 
 class JSONReader

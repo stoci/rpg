@@ -39,6 +39,11 @@ public class Model implements IActions
 	//resurrection modifier
 	private double resModifier;
 	
+	public Model()
+	{
+		super();
+		bArmorClass=cArmorClass=12;
+	}
 	@Override
 	public void useWeapon() {
 		// TODO Auto-generated method stub
