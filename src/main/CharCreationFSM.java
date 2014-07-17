@@ -523,12 +523,19 @@ class CharCreationFSM
 				m.setmSkill(m.getmSkill()+bw.getSkill());m.setmBard(m.getmBard()+bw.getBard());
 				m.setGold(m.getGold()+bw.getGold());
 			}
+			
+			// consider adding AC/GOLD bonuses to separate ArrayLists for speed in next steps
 		}
 		
-		// modify gold according to table in step #12
-		int gold = m.getGold();
+		// apply gold bonuses separately
+		int CSplusCH = m.getcCommonSense()+m.getcCharisma();
+		int LK = m.getcLuck();
 		
-
+		if(CSplusCH<=28){}
+		for (BonusWrapper bw : bonuses)
+		{
+			if(bw.getType().equalsIgnoreCase("gold_cs+ch")||bw.getType().equalsIgnoreCase("gold_lk"));
+		}
 	}
 
 }
