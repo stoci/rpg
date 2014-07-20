@@ -9,10 +9,8 @@
 package main;
 
 import java.util.ArrayList;
-
 import javafx.application.Platform;
-import character.BonusWrapper;
-import character.Model;
+import character.*;
 
 /*finite state machine implementation of game states
  * build character progression: Race, gender, class, profession, alignment, age*/
@@ -23,11 +21,15 @@ class MainFSM {
 	
 	// stores bonuses by specific type (name)
 	static ArrayList<BonusWrapper> bonuses = new ArrayList<BonusWrapper>();
+	
+	// stores bonuses dependent on ranges except AGE
+	static ArrayList<RangeWrapper> rangeBonuses = new ArrayList<RangeWrapper>();
 
 	/* welcome screen -- hard-coded */
 	public void enter() {
 		new JSONReader().readBonusFile();
 //		for(BonusWrapper bw : bonuses)System.out.println(bw);
+//		for(RangeWrapper rw : rangeBonuses)System.out.println(rw);
 		Game.textDescr
 				.setText("Welcome to Proving Grounds!\n(C)ontinue\n(Q)uit");
 		Game.validChoices.add("c");

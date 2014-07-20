@@ -10,7 +10,7 @@ package main;
 
 import java.util.*;
 import javax.json.*;
-import character.BonusWrapper;
+import character.*;
 
 class JSONReader
 {
@@ -19,16 +19,19 @@ class JSONReader
 	
 	// file paths
 	private String bonus = "resources/data/bonus.json";
+	private String range_bonus = "resources/data/range_bonus.json";
 	private String races = "resources/data/races.json";
 	private String genders = "resources/data/genders.json";
 	private String alignments = "resources/data/alignments.json";
 	private String classes = "resources/data/classes.json";
 	private String professions = "resources/data/professions.json";
 	
+	// reads in bonus.json and range_bonus.json then places them in Wrapper objects
 	public void readBonusFile()
 	{
 		MainFSM.bonuses.clear();
 		try {
+			// bonus.json
 			JsonReader reader = Json.createReader(getClass().getClassLoader().getResourceAsStream(bonus));
 			JsonArray arr = reader.readArray();
 
@@ -37,8 +40,19 @@ class JSONReader
 
 			/* iterate through objects in bonus JSON array */
 			for (JsonObject obj : x) {
-//				System.out.println(obj.entrySet().toArray());
 				MainFSM.bonuses.add(new BonusWrapper(obj.entrySet()));
+			}
+			
+			//range_bonus.json
+			reader = Json.createReader(getClass().getClassLoader().getResourceAsStream(range_bonus));
+			arr = reader.readArray();
+
+//			System.out.println(arr);
+			x = arr.getValuesAs(JsonObject.class);
+
+			/* iterate through objects in bonus JSON array */
+			for (JsonObject obj : x) {
+				MainFSM.rangeBonuses.add(new RangeWrapper(obj.entrySet()));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

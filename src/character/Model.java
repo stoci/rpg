@@ -43,6 +43,7 @@ public class Model implements IActions
 	{
 		super();
 		bArmorClass=cArmorClass=12;
+		level=1;
 	}
 	@Override
 	public void useWeapon() {

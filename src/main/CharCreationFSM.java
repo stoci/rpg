@@ -17,9 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
-import character.BonusWrapper;
-import character.Const;
-import character.Model;
+import character.*;
 
 class CharCreationFSM
 {
@@ -274,6 +272,7 @@ class CharCreationFSM
 						"LK " + MainFSM.m.getcLuck(), "CN " + MainFSM.m.getcConstitution(), "AVG "+MainFSM.m.meanBaseStats());
 		Game.textDescr.appendText(output);
 	}
+	
 	// secondary stats determined
 	private void state10() {
 		Game.state = 10;
@@ -303,7 +302,7 @@ class CharCreationFSM
 		String output = String.format("\n\n# of rolls left:%3s\n\n%-15s%-3s%-15s%-3s\n%-15s%-3s\n%-15s%-3s"
 				+ "\n%-15s%-3s%-15s%-3s\n\n%22s\n\n(K)eep\n(R)eroll\n\n(Esc)ape",numRolls10,
 				"Mystic Points",m.getmMystic(),"Hit Points",m.getmHit(),"Prayer Points",m.getmPrayer(),"Skill Points",m.getmSkill(),
-				"Bard Points",m.getmBard(),"Gold Pieces",m.getGold(),"Armor Class "+m.getbArmorClass());
+				"Bard Points",m.getmBard(),"Gold Pieces",m.getGold(),"Armor Class "+m.getcArmorClass());
 		Game.textDescr.appendText(output);
 	}
 	
@@ -488,16 +487,18 @@ class CharCreationFSM
 
 	}
 	
-	// adds bonuses (bonus.json) to seven secondary stats -- AC,Hit,Mystic,Prayer,SKill,Bard,Gold
+	// adds bonuses (bonus.json & range_bonus.json) to seven secondary stats -- AC,Hit,Mystic,Prayer,SKill,Bard,Gold
 	private void applySecondaryBonuses()
 	{		
 		ArrayList<BonusWrapper> bonuses = MainFSM.bonuses; 
+		ArrayList<RangeWrapper> rangeBonuses = MainFSM.rangeBonuses; 
 		String race = MainFSM.m.getRace();
 		String gender = MainFSM.m.getGender();
 		String profession = MainFSM.m.getProfession();
 		String alignment = MainFSM.m.getAlignment();
 		int age = MainFSM.m.getAge();
 		Model m = MainFSM.m;
+		m.setcArmorClass(m.getbArmorClass());
 		
 		//set age for bonus application
 		if(age<=24)age=24;
@@ -523,18 +524,53 @@ class CharCreationFSM
 				m.setmSkill(m.getmSkill()+bw.getSkill());m.setmBard(m.getmBard()+bw.getBard());
 				m.setGold(m.getGold()+bw.getGold());
 			}
-			
+			System.out.println(m.getcArmorClass());
 			// consider adding AC/GOLD bonuses to separate ArrayLists for speed in next steps
 		}
 		
-		// apply gold bonuses separately
-		int CSplusCH = m.getcCommonSense()+m.getcCharisma();
-		int LK = m.getcLuck();
-		
-		if(CSplusCH<=28){}
-		for (BonusWrapper bw : bonuses)
+		// apply range bonuses separately
+		for(RangeWrapper rw : rangeBonuses)
 		{
-			if(bw.getType().equalsIgnoreCase("gold_cs+ch")||bw.getType().equalsIgnoreCase("gold_lk"));
+			switch(rw.getType())
+			{
+				case "AC":
+					// level section
+					if(rw.getName().equals("Level"))
+					{
+						int level = m.getLevel();
+						// match found
+						if(level>=rw.getLower() && level<=rw.getUpper())
+							m.setcArmorClass(m.getcArmorClass()+rw.getBonus());
+					}
+					// TW+DX section
+					else if(rw.getName().equals("TW+DX"))
+					{
+						int sumTWDX = m.getcTwitch()+m.getcDexterity();
+						// match found
+						if(sumTWDX>=rw.getLower() && sumTWDX<=rw.getUpper())
+							m.setcArmorClass(m.getcArmorClass()+rw.getBonus());
+					}
+//					System.out.println(m.getcArmorClass());
+					break;
+				case "Gold":
+					// LK section
+					if(rw.getName().equals("LK"))
+					{
+						int luck = m.getcLuck();
+						// match found
+						if(luck>=rw.getLower() && luck<=rw.getUpper())
+							m.setGold(m.getGold()+rw.getBonus());
+					}
+					// CS+CH section
+					else if(rw.getName().equals("CS+CH"))
+					{
+						int sumCSCH = m.getcCommonSense()+m.getcCharisma();
+						// match found
+						if(sumCSCH>=rw.getLower() && sumCSCH<=rw.getUpper())
+							m.setGold(m.getGold()+rw.getBonus());
+					}
+					break;
+			}
 		}
 	}
 
