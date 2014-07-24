@@ -306,11 +306,26 @@ class CharCreationFSM
 		Game.textDescr.appendText(output);
 	}
 	
+	// character summary screen
 	private void state11()
 	{
 		Game.state = 11;
-		Game.validChoices.add("escape");
+		Game.validChoices.add("escape");Game.validChoices.add("c");Game.validChoices.add("s");
+		Game.validChoices.add("h");Game.validChoices.add("i");Game.validChoices.add("p");
+		Model m = MainFSM.m;
+		
 		switch (Game.userInput) {
+		case "c": 
+			clear();checkState(Game.state=12);
+			return;
+		case "s": 
+			return;
+		case "h":
+			return;
+		case "i":
+			return;
+		case "p":
+			return;
 		case "escape":
 			Game.textDescr.setVisible(true);
 			clear();checkState(Game.state=10);
@@ -318,7 +333,40 @@ class CharCreationFSM
 		default:
 			break;
 		}
-		Game.textDescr.setText("State11 Placeholder\n\n(Esc)ape");
+		
+		String output = String
+				.format("%s,Lvl%-4s %s %s\n\n%s yr old %s with %2s GP\n%s Class, %s\n\n"
+						+ "Exp Pts %s/%s %s\n\n%-12s%-10s%-10s\n%-12s%-10s%-10s\n"
+						+ "%-12s%-10s%-10s\n%-12s%-10s%-10s\n%-12s\n\n"
+						+ "%-12s/%2s%-12s/%2s\n%-12s/%2s%-12s/%2s\n%-12s/%2s%-15s\n%-12s/%2s%-20s"
+						+ "\n\n(S)hare/(H)oard Gold\n(I)tems\n(Esc)ape\n(C)ontinue",
+						m.getName(),m.getLevel(),m.getRace(),m.getProfession(),m.getAge(),
+						m.getGender(),"XX",m.getCharClass(),m.getAlignment(),1000,1000,
+						m.getStatus(),"Physical","Mental","Ineffable","ST "+m.getcStrength(),
+						"IN "+m.getcIntelligence(),"SP "+m.getcSpirituality(),"TW "+m.getcTwitch(),
+						"WI "+m.getcWisdom(),"CH "+m.getcCharisma(),"DX "+m.getcDexterity(),
+						"CS "+m.getcCommonSense(),"LK "+m.getcLuck(),"CN "+m.getcConstitution(),
+						"Mystic Pts "+m.getcMystic(),m.getmMystic(),"Hit Pts "+m.getcHit(),m.getmHit(),
+						"Prayer Pts "+m.getcPrayer(),m.getmPrayer(), "NAT "+0,0,
+						"Skill Pts "+m.getcSkill(),m.getmSkill(),"Armor Class "+m.getcArmorClass(),
+						"Bard Pts "+m.getcBard(),m.getmBard(),"Resurrect Mod "+m.getResModifier()+"%");
+		Game.textDescr.setText(output);
+	}
+	
+	// placeholder
+	private void state12()
+	{
+		Game.state = 12;
+		Game.validChoices.add("escape");
+		switch (Game.userInput) {
+		case "escape":
+			Game.textDescr.setVisible(true);
+			clear();checkState(Game.state=11);
+			return;
+		default:
+			break;
+		}
+		Game.textDescr.setText("State12 Placeholder\n\n(Esc)ape");
 	}
 
 	/*
@@ -359,6 +407,9 @@ class CharCreationFSM
 			break;
 		case 11:
 			state11();
+			break;
+		case 12:
+			state12();
 			break;
 		default:
 			return;
@@ -524,7 +575,7 @@ class CharCreationFSM
 				m.setmSkill(m.getmSkill()+bw.getSkill());m.setmBard(m.getmBard()+bw.getBard());
 				m.setGold(m.getGold()+bw.getGold());
 			}
-			System.out.println(m.getcArmorClass());
+//			System.out.println(m.getcArmorClass());
 			// consider adding AC/GOLD bonuses to separate ArrayLists for speed in next steps
 		}
 		
@@ -545,9 +596,9 @@ class CharCreationFSM
 					// TW+DX section
 					else if(rw.getName().equals("TW+DX"))
 					{
-						int sumTWDX = m.getcTwitch()+m.getcDexterity();
+						int sum = m.getcTwitch()+m.getcDexterity();
 						// match found
-						if(sumTWDX>=rw.getLower() && sumTWDX<=rw.getUpper())
+						if(sum>=rw.getLower() && sum<=rw.getUpper())
 							m.setcArmorClass(m.getcArmorClass()+rw.getBonus());
 					}
 //					System.out.println(m.getcArmorClass());
@@ -564,12 +615,103 @@ class CharCreationFSM
 					// CS+CH section
 					else if(rw.getName().equals("CS+CH"))
 					{
-						int sumCSCH = m.getcCommonSense()+m.getcCharisma();
+						int sum = m.getcCommonSense()+m.getcCharisma();
 						// match found
-						if(sumCSCH>=rw.getLower() && sumCSCH<=rw.getUpper())
+						if(sum>=rw.getLower() && sum<=rw.getUpper())
 							m.setGold(m.getGold()+rw.getBonus());
 					}
 					break;
+				case "Hit":
+					// LK section
+					if(rw.getName().equals("LK"))
+					{
+						int luck = m.getcLuck();
+						// match found
+						if(luck>=rw.getLower() && luck<=rw.getUpper())
+							m.setmHit(m.getmHit()+rw.getBonus());
+					}
+					// CN section
+					else if(rw.getName().equals("CN"))
+					{
+						int CN = m.getcConstitution();
+						// match found
+						if(CN>=rw.getLower() && CN<=rw.getUpper())
+							m.setmHit(m.getmHit()+rw.getBonus());
+					}
+					break;
+				case "Mystic":
+					// LK section
+					if(rw.getName().equals("LK"))
+					{
+						int luck = m.getcLuck();
+						// match found
+						if(luck>=rw.getLower() && luck<=rw.getUpper())
+							m.setmMystic(m.getmMystic()+rw.getBonus());
+					}
+					// IN+CS section
+					else if(rw.getName().equals("IN+CS"))
+					{
+						int sum = m.getcIntelligence()+m.getcCommonSense();
+						// match found
+						if(sum>=rw.getLower() && sum<=rw.getUpper())
+							m.setmMystic(m.getmMystic()+rw.getBonus());
+					}
+					break;
+				case "Prayer":
+					// LK section
+					if(rw.getName().equals("LK"))
+					{
+						int luck = m.getcLuck();
+						// match found
+						if(luck>=rw.getLower() && luck<=rw.getUpper())
+							m.setmPrayer(m.getmPrayer()+rw.getBonus());
+					}
+					// WI+SP section
+					else if(rw.getName().equals("WI+SP"))
+					{
+						int sum = m.getcWisdom()+m.getcSpirituality();
+						// match found
+						if(sum>=rw.getLower() && sum<=rw.getUpper())
+							m.setmPrayer(m.getmPrayer()+rw.getBonus());
+					}
+					break;
+				case "Skill":
+					// LK section
+					if(rw.getName().equals("LK"))
+					{
+						int luck = m.getcLuck();
+						// match found
+						if(luck>=rw.getLower() && luck<=rw.getUpper())
+							m.setmSkill(m.getmSkill()+rw.getBonus());
+					}
+					// DX+CS section
+					else if(rw.getName().equals("DX+CS"))
+					{
+						int sum = m.getcDexterity()+m.getcCommonSense();
+						// match found
+						if(sum>=rw.getLower() && sum<=rw.getUpper())
+							m.setmSkill(m.getmSkill()+rw.getBonus());
+					}
+					break;
+				case "Bard":
+					// LK section
+					if(rw.getName().equals("LK"))
+					{
+						int luck = m.getcLuck();
+						// match found
+						if(luck>=rw.getLower() && luck<=rw.getUpper())
+							m.setmBard(m.getmBard()+rw.getBonus());
+					}
+					// DX+CH section
+					else if(rw.getName().equals("DX+CS"))
+					{
+						int sum = m.getcDexterity()+m.getcCharisma();
+						// match found
+						if(sum>=rw.getLower() && sum<=rw.getUpper())
+							m.setmBard(m.getmBard()+rw.getBonus());
+					}
+					break;
+				default:break;
 			}
 		}
 	}
